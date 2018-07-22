@@ -1,0 +1,26 @@
+useDynLib(crqa)
+
+export(CTcrqa,
+    calcphi,
+    checkts,
+    crqa,
+    drpdfromts,
+    lorenzattractor,
+    optimizeParam,
+    runcrqa,
+    plotRP,
+    simts,
+    spdiags,
+    theiler,
+    tt,
+    wincrqa,
+    windowdrp)
+
+import(tseriesChaos,
+       fields,
+       plot3D,
+       pracma)
+
+importFrom("Matrix", diag, t, Matrix, sparseMatrix)
+importFrom("stats", sd, median, rnorm, runif)  
+importFrom("utils", tail)
