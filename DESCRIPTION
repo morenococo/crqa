@@ -1,43 +1,59 @@
 Package: crqa
 Type: Package
-Title: Cross-Recurrence Quantification Analysis for Categorical and Continuous
+Title: Recurrence Quantification Analysis for Categorical and Continuous
     Time-Series
-Version: 1.0.7
-Date: 2017-06-05
-Author: Moreno I. Coco and Rick Dale with contributions of James D. Dixon and John Nash
+Version: 2.0
+Date: 2019-10-24
+Authors@R: c(
+    person("Moreno  I.", "Coco", role = c("cre","aut"), 
+    email="moreno.cocoi@gmail.com"),
+    person("Dan"," Monster", role = "aut", 
+    email = "danm@econ.au.dk"),
+    person("Giuseppe","Leonardi", role = "aut", 
+    email = "g.leonardi@vizja.pl"), 
+    person("Rick"," Dale", role = "aut", 
+    email = "rdale@ucla.edu"), 
+    person("Sebastian","Wallot", role = "aut", 
+    email = "sebastian.wallot@ae.mpg.de"), 
+    person("James D.","Dixon", role = "ctb", 
+    email = "james.dixon@uconn.edu"), 
+    person("John  C.","Nash", role = "ctb",
+    email = "nashjc@uottawa.ca")
+    )
 Maintainer: Moreno I. Coco <moreno.cocoi@gmail.com>
 Description: 
-    Cross-recurrence quantification analysis 
-    of two time-series, of either categorical or
-    continuous values. It provides different methods
-    for profiling cross-recurrence, i.e., only looking
-    at the diagonal recurrent points, as well as more
+    Auto, Cross and Multi-dimensional recurrence quantification analysis. 
+    Different methods for computing recurrence, cross vs. multidimensional
+    or profile iti.e., only looking at the diagonal recurrent points, 
+    as well as functions for optimization and plotting are proposed.
     in-depth measures of the whole cross-recurrence plot,
-    e.g., recurrence rate.
+    Please refer to by Coco and Dale (2014) <doi:10.3389/fpsyg.2014.00510> 
+    and Wallot (2018) <doi: 10.1080/00273171.2018.1512846>
+    for further details about the method.
 Depends:
-    R (>= 3.0.0),
+    R (>= 3.0.0)
+Imports:
     Matrix,
+    pracma,
     tseriesChaos,
-    fields,
+    gplots,
     plot3D,
-    pracma
+    rdist
 License: GPL (>= 2)
 Collate:
-    'ami.R'
-    'CTcrqa.R'
-    'calcphi.R'
-    'checkts.R'
     'crqa.R'
+    'crqa_helpers.R'
     'drpdfromts.R'
     'lorenzattractor.R'
+    'mdDelay.R'
+    'mdFnn.R'
     'optimizeParam.R'
+    'piecewiseRQA.R'
     'plotRP.R'
-    'runcrqa.R'
     'simts.R'
     'spdiags.R'
-    'takephi.R'
-    'theiler.R'
-    'tt.R'
     'wincrqa.R'
     'windowdrp.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+LazyData: true
+
