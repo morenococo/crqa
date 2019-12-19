@@ -39,7 +39,7 @@ License: \tab GPL >= 2\cr
   representative of the underlying dynamics of the system
   are extracted.
 
-\code{drpdfromts}: Method to explore the diagonal profile of 
+\code{drpfromts}: Method to explore the diagonal profile of 
   the recurrence plot (Auto, Cross, or Multi-dimensional).
   It returns the recurrence for different delays, 
   the maximal recurrence observed and the delay at which it occurred.
