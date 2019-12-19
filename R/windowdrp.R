@@ -31,7 +31,7 @@ for (i in dpoint){
   ts2win = ts2[i:(i+windowsize - 1)];
   
   drpd = c(drpd,
-      mean(drpdfromts(ts1win, ts2win,lagwidth,
+      mean(drpfromts(ts1win, ts2win,lagwidth,
                       radius, delay, embed, rescale,
                       normalize, mindiagline, minvertline,
                       tw, whiteline, recpt, side, 
