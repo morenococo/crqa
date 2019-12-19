@@ -96,7 +96,7 @@ tw, whiteline, recpt, side, method, metric, datatype)
   and Rick Dale (rdale@ucmerced.edu)}
 
 
-\seealso{\code{\link{drpdfromts}}}
+\seealso{\code{\link{drpfromts}}}
 
 \examples{
 
