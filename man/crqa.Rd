@@ -92,15 +92,14 @@ metric, datatype)
   \item{LAM}{Proportion of recurrent points forming vertical
     line structures}
   \item{TT}{The average length of vertical line structures}
-  \item{catEnt}{The average length of vertical line structures}
+  \item{catH}{Entropy of categorical recurrence plots based on rectangular block structures}
   \item{RP}{The Recurrence Plot sparse matrix data}
 }
 
 \references{
 Coco, M. I., and Dale, R. (2014). Cross-recurrence quantification analysis of categorical and continuous time series: an R package. Frontiers in psychology, 5, 510.
-Wallot, S. (2018). Multidimensional Cross-Recurrence Quantification Analysis 
-(MdCRQA) a method for quantifying correlation between multivariate time-series.
-Multivariate behavioral research, 1-19}
+
+Wallot, S. (2018). Multidimensional Cross-Recurrence Quantification Analysis (MdCRQA) a method for quantifying correlation between multivariate time-series. Multivariate behavioral research, 1-19}
 
 \author{Moreno I. Coco (moreno.cocoi@gmail.com)}
 
@@ -108,10 +107,9 @@ Multivariate behavioral research, 1-19}
   version provided by Rick Dale, and created during 
   the Non-Linear Methods for Psychological Science
   summer school held at the University of Cincinnati
-  in 2012. 
-  The multi-dimensional method for the crqa function 
-  has been written together with 
-  Sebastian Wallot (sebastian.wallot at aesthetics.mpg.de )()}
+  in 2012. The multi-dimensional method for the crqa function 
+  has been written together with Sebastian Wallot 
+  (sebastian.wallot at aesthetics.mpg.de )}
 
 \seealso{\code{\link{spdiags}}, \code{\link{simts}}}
 
@@ -130,8 +128,8 @@ method = 'crqa'; metric = 'euclidean';
 datatype = "categorical"
 
 ans = crqa(narrator, listener, delay, embed, rescale, radius, normalize, 
-           mindiagline, minvertline, tw, whiteline, recpt, side, method, metric, 
-           datatype)
+           mindiagline, minvertline, tw, whiteline, recpt, side, method,
+           metric, datatype)
 
 print(ans[1:10]) ## last argument of list is the recurrence plot
 
