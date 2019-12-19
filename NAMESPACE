@@ -1,7 +1,7 @@
 useDynLib(crqa, .registration = TRUE)
 
 export(crqa,
-       drpdfromts,
+       drpfromts,
        lorenzattractor,
        mdDelay, 
        mdFnn,
