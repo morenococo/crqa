@@ -1,12 +1,30 @@
-## plot the RP
-## need to be improved, need to take out the for() loop for it
-## RP  : the RP plot
-## par : a list of parameters for the plotting
-##     unit:   the unit to mark ticks on the axes
-##     labelx: the label of the x-axis  
-##     labely: the label of the y-axis  
-##     cols  : the color for the recurrent recurrent points
-##     pcex   : the size of the dots
+## plotRP(): Function to plot the RP
+##
+## Arguments:
+##     RP        : the RP ngCMatrix output from crqa() function
+##     labelx    : character ; the text label of the x-axis 
+##                 (default: "Time")
+##     labely    : character ; the text label of the y-axis 
+##                 (default: "Time")
+##     labelmain : character ; main title text of the plot 
+##                 (default: "Recurrence Plot")
+##     point_col : character ; the color for the recurrent recurrent point;
+##                 may include any colors from the base R plot repertoire
+##                 (default: "black)
+##     pcex      : numeric ; the size of the recurrent points
+##                 (default: .3)
+##     pch       : numeric ; the style of the recurrent points
+##                 (default: 1)
+##     show_ticks: boolean ; whether to show x- and y-ticks or not
+##                 (default: FALSE)
+##     unit      : numeric ; gap between sample labeling on axes.
+##                 Note: only relevant if `show_ticks = TRUE`.
+##                 (default: 10)
+##
+## Value:
+##     A square plot visualizing the recurrence matrix.
+##
+## Author(s): Moreno I. Coco & Alexandra Paxton
 
 .packageName <- 'crqa'
 
