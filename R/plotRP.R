@@ -12,9 +12,10 @@
 
 plotRP <- function(RP, par){
   
-  if (exists("par") == FALSE){ # we use some defaults
-    ## default values
-    unit  = 2; labelx = "Time"; labely = "Time" 
+  # if no user-defined parameters exist, use defaults
+  if (exists("par") == FALSE){
+    labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot";
+    unit  = 2
     cols  = "black"; pcex = .3; pch = 1; las = 0;
     labax = seq(0, nrow(RP), unit); labay = seq(0, nrow(RP), unit);
   } else { # we load the values that we desire
@@ -32,8 +33,12 @@ plotRP <- function(RP, par){
   
   par(mar = c(3.8, 3.8, 0.2,2), font.axis = 2, cex.axis = 1,
       font.lab = 2, cex.lab = 1.2)
+  plot(tstamp, tstamp, type = "n", 
+       xlab = "", ylab = "", main=labelmain,
+       xaxt = "n", yaxt = "n",
+       font = 2)
   
-  plot(tstamp, tstamp, type = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+  # add recurrent points to the plot
   matpoints(ind[,1], ind[,2],  cex = pcex, col = cols, pch = pch) 
   
   mtext(labelx, at = mean(tstamp), side = 1, line = 2.2, cex = 1.2, font = 2)
