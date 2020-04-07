@@ -11,20 +11,30 @@
 \usage{ plotRP(RP, par) }
 
 \arguments{
-  \item{RP}{The Recurrence Plot sparse matrix data}
-  \item{par}{a list of parameters for the plotting:
-            unit: to mark ticks on the axes of the RP 
-            labelx: the label of the x-axis  
-            labely: the label of the y-axis  
-            cols: the color for the recurrent recurrent points
-            pcex: the size of the dots}
-            }
+  \item{RP}{A recurrence plot sparse matrix from `crqa()`}
+  \item{labelx}{The text label of the x-axis (character). Default: "Time"}
+  \item{labely}{The text label of the y-axis (character). Default: "Time"}
+  \item{labely}{Main title text of the plot (character). Default: "Recurrence Plot"}
+  \item{point_col}{The color for the recurrent points (character). May include any 
+  colors from the base R plot repertoire. Default: "black"}
+  \item{pcex}{The size of the recurrent points (numeric). Default: .3}
+  \item{pch}{The style of the recurrent points (numeric). Default: .3}
+  \item{show_ticks}{Whether to show x- and y-ticks or not (boolean). Default: FALSE}
+  \item{unit}{Gap between sample labeling on axes (numeric). Note: only relevant if 
+  `show_ticks = TRUE`. Default: 10}
+  
+## Value:
+##     A square plot visualizing the recurrence matrix.
+##
+## Author(s): Moreno I. Coco & Alexandra Paxton
+  
 
 \value{
-  A square plot visualising the recurrence matrix.
+  A square plot visualising the recurrence matrix, saved as a `recordedplot` object
 }
 
 \author{Moreno I. Coco (moreno.cocoi@gmail.com)}
+\author{Alexandra Paxton (alexandra.paxton@uconn.edu)}
 
 
 \examples{
@@ -37,10 +47,9 @@
 
 # res = crqa(ts2, ts1, delay, embed, rescale, radius,  normalize, mindiagline, minvertline, tw)
 
-# par = list(unit = 2, labelx = "Time", labely = "Time", cols = "blue", pcex = 1)
-
 # RP = res$RP
-# plotRP(RP, par)
+# plotRP(RP, labelx = "Time", labely = "Time", show_ticks = TRUE, unit = 2,
+#       cols = "blue", pcex = 1)
 }
 
 \keyword{misc}
