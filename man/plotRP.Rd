@@ -5,7 +5,7 @@
 
 \description{
   A convenience function to plot the RP matrix returned by 
-  the `crqa()'  
+  `crqa()`
 }
 
 \usage{ plotRP(RP, par) }
@@ -18,24 +18,18 @@
   \item{point_col}{The color for the recurrent points (character). May include any 
   colors from the base R plot repertoire. Default: "black"}
   \item{pcex}{The size of the recurrent points (numeric). Default: .3}
-  \item{pch}{The style of the recurrent points (numeric). Default: .3}
+  \item{pch}{The style of the recurrent points (numeric). Default: 1}
   \item{show_ticks}{Whether to show x- and y-ticks or not (boolean). Default: FALSE}
   \item{unit}{Gap between sample labeling on axes (numeric). Note: only relevant if 
   `show_ticks = TRUE`. Default: 10}
+}
   
-## Value:
-##     A square plot visualizing the recurrence matrix.
-##
-## Author(s): Moreno I. Coco & Alexandra Paxton
-  
-
-\value{
-  A square plot visualising the recurrence matrix, saved as a `recordedplot` object
+\value{A square plot visualising the recurrence matrix, saved as a `recordedplot` object
 }
 
-\author{Moreno I. Coco (moreno.cocoi@gmail.com)}
-\author{Alexandra Paxton (alexandra.paxton@uconn.edu)}
+\author{Moreno I. Coco (moreno.cocoi@gmail.com)
 
+Alexandra Paxton (alexandra.paxton@uconn.edu)}
 
 \examples{
 ## run a simple crqa 
