@@ -53,4 +53,9 @@ plotRP <- function(RP,
     mtext(labay, at = labay, side = 2, line = .1, cex = .8, font = 2, las = las)
   }
   
+  # create variable to save plot
+  output_plot = recordPlot()
+  
+  # return the plot
+  return(output_plot)
 }
