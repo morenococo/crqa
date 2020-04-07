@@ -8,7 +8,7 @@
 ##                 (default: "Time")
 ##     labelmain : character ; main title text of the plot 
 ##                 (default: "Recurrence Plot")
-##     point_col : character ; the color for the recurrent recurrent point;
+##     point_col : character ; the color for the recurrent points;
 ##                 may include any colors from the base R plot repertoire
 ##                 (default: "black)
 ##     pcex      : numeric ; the size of the recurrent points
