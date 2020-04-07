@@ -10,17 +10,11 @@
 
 .packageName <- 'crqa'
 
-plotRP <- function(RP, par){
-  
-  # if no user-defined parameters exist, use defaults
-  if (exists("par") == FALSE){
-    labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot";
-    unit  = 10
-    cols  = "black"; pcex = .3; pch = 1;
-    show_ticks = FALSE
-  } else { # otherwise, load in user-specified parameters
-    for (v in 1:length(par)) assign(names(par)[v], par[[v]])
-  }
+plotRP <- function(RP, 
+                   labelx = "Time", labely = "Time", 
+                   labelmain = "Recurrence Plot",
+                   point_col = "black", pcex = .3, pch = 1,
+                   unit = 10, show_ticks = FALSE){
   
   # find the size of the RP
   xdim   = nrow(RP)
