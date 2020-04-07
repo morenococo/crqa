@@ -22,11 +22,14 @@ plotRP <- function(RP, par){
     for (v in 1:length(par)) assign(names(par)[v], par[[v]])
   }
   
+  # find the size of the RP
   xdim   = nrow(RP)
   ydim   = ncol(RP)
   
-  RP = matrix(as.numeric(RP), nrow = xdim, ncol = ydim) # transform it for plotting
+  # transform the RP into a square matrix
+  RP = matrix(as.numeric(RP), nrow = xdim, ncol = ydim)
   
+  # figure out where the recurrent points are
   ind = which(RP == 1, arr.ind = T)
   
   tstamp = seq(0, xdim, unit)
