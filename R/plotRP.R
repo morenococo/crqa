@@ -34,7 +34,8 @@ plotRP <- function(RP, par){
   
   tstamp = seq(0, xdim, unit)
   
-  par(mar = c(3.8, 3.8, 0.2,2), font.axis = 2, cex.axis = 1,
+  # create the shell of the plot
+  par(mar = c(3.8, 3.8, 2,2), font.axis = 2, cex.axis = 1,
       font.lab = 2, cex.lab = 1.2)
   plot(tstamp, tstamp, type = "n", 
        xlab = "", ylab = "", main=labelmain,
@@ -44,8 +45,9 @@ plotRP <- function(RP, par){
   # add recurrent points to the plot
   matpoints(ind[,1], ind[,2],  cex = pcex, col = cols, pch = pch) 
   
-  mtext(labelx, at = mean(tstamp), side = 1, line = 2.2, cex = 1.2, font = 2)
-  mtext(labely, at = mean(tstamp), side = 2, line = 2.2, cex = 1.2, font = 2)
+  # add x- and y-axis labels to the plot (so they're not too far away)
+  mtext(labelx, at = mean(tstamp), side = 1, line = 1.1, cex = 1.2, font = 2)
+  mtext(labely, at = mean(tstamp), side = 2, line = 1.1, cex = 1.2, font = 2)
   
   # if the user would like x- and y-tickmarks, show and label them
   if (show_ticks == TRUE){
