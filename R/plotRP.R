@@ -16,9 +16,9 @@ plotRP <- function(RP, par){
   if (exists("par") == FALSE){
     labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot";
     unit  = 2
-    cols  = "black"; pcex = .3; pch = 1; las = 0;
-    labax = seq(0, nrow(RP), unit); labay = seq(0, nrow(RP), unit);
-  } else { # we load the values that we desire
+    cols  = "black"; pcex = .3; pch = 1;
+    show_ticks = FALSE
+  } else { # otherwise, load in user-specified parameters
     for (v in 1:length(par)) assign(names(par)[v], par[[v]])
   }
   
@@ -44,14 +44,13 @@ plotRP <- function(RP, par){
   mtext(labelx, at = mean(tstamp), side = 1, line = 2.2, cex = 1.2, font = 2)
   mtext(labely, at = mean(tstamp), side = 2, line = 2.2, cex = 1.2, font = 2)
   
-  
-  #  if (is.numeric(labax)){ ## it means there is some default
-  #    mtext(labax, at = seq(1, nrow(RP), nrow(RP)/10), side = 1, line = .5, cex = 1, font = 2)
-  #    mtext(labay, at = seq(1, nrow(RP), nrow(RP)/10), side = 2, line = .5, cex = 1, font = 2)
-  #  } else{
-  mtext(labax, at = tstamp, side = 1, line = .5, cex = .8, font = 2, las = las)
-  mtext(labay, at = tstamp, side = 2, line = .5, cex = .8, font = 2, las = las)
-  
-  # }
+  # if the user would like x- and y-tickmarks, show and label them
+  if (show_ticks == TRUE){
+    labax = seq(0, nrow(RP), unit)
+    labay = seq(0, nrow(RP), unit)
+    las = 0
+    mtext(labax, at = labax, side = 1, line = .1, cex = .8, font = 2, las = las)
+    mtext(labay, at = labay, side = 2, line = .1, cex = .8, font = 2, las = las)
+  }
   
 }
