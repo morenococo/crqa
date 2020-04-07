@@ -15,7 +15,7 @@ plotRP <- function(RP, par){
   # if no user-defined parameters exist, use defaults
   if (exists("par") == FALSE){
     labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot";
-    unit  = 2
+    unit  = 10
     cols  = "black"; pcex = .3; pch = 1;
     show_ticks = FALSE
   } else { # otherwise, load in user-specified parameters
@@ -32,7 +32,8 @@ plotRP <- function(RP, par){
   # figure out where the recurrent points are
   ind = which(RP == 1, arr.ind = T)
   
-  tstamp = seq(0, xdim, unit)
+  # create all time series of all possible samples on axis
+  tstamp = seq(0, xdim, 1)
   
   # create the shell of the plot
   par(mar = c(3.8, 3.8, 2,2), font.axis = 2, cex.axis = 1,
