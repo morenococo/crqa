@@ -38,7 +38,7 @@ plotRP <- function(RP,
        font = 2)
   
   # add recurrent points to the plot
-  matpoints(ind[,1], ind[,2],  cex = pcex, col = cols, pch = pch) 
+  matpoints(ind[,1], ind[,2],  cex = pcex, col = point_col, pch = pch) 
   
   # add x- and y-axis labels to the plot (so they're not too far away)
   mtext(labelx, at = mean(tstamp), side = 1, line = 1.1, cex = 1.2, font = 2)
