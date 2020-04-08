@@ -5,31 +5,27 @@
 
 \description{
   A convenience function to plot the RP matrix returned by 
-  `crqa()`
+  the `crqa()'  
 }
 
 \usage{ plotRP(RP, par) }
 
 \arguments{
-  \item{RP}{A recurrence plot sparse matrix from `crqa()`}
-  \item{labelx}{The text label of the x-axis (character). Default: "Time"}
-  \item{labely}{The text label of the y-axis (character). Default: "Time"}
-  \item{labely}{Main title text of the plot (character). Default: "Recurrence Plot"}
-  \item{point_col}{The color for the recurrent points (character). May include any 
-  colors from the base R plot repertoire. Default: "black"}
-  \item{pcex}{The size of the recurrent points (numeric). Default: .3}
-  \item{pch}{The style of the recurrent points (numeric). Default: 1}
-  \item{show_ticks}{Whether to show x- and y-ticks or not (boolean). Default: FALSE}
-  \item{unit}{Gap between sample labeling on axes (numeric). Note: only relevant if 
-  `show_ticks = TRUE`. Default: 10}
-}
-  
-\value{A square plot visualising the recurrence matrix, saved as a `recordedplot` object
+  \item{RP}{The Recurrence Plot sparse matrix data}
+  \item{par}{a list of parameters for the plotting:
+            unit: to mark ticks on the axes of the RP 
+            labelx: the label of the x-axis  
+            labely: the label of the y-axis  
+            cols: the color for the recurrent recurrent points
+            pcex: the size of the dots}
+            }
+
+\value{
+  A square plot visualising the recurrence matrix.
 }
 
-\author{Moreno I. Coco (moreno.cocoi@gmail.com)
+\author{Moreno I. Coco (moreno.cocoi@gmail.com)}
 
-Alexandra Paxton (alexandra.paxton@uconn.edu)}
 
 \examples{
 ## run a simple crqa 
@@ -41,9 +37,10 @@ Alexandra Paxton (alexandra.paxton@uconn.edu)}
 
 # res = crqa(ts2, ts1, delay, embed, rescale, radius,  normalize, mindiagline, minvertline, tw)
 
+# par = list(unit = 2, labelx = "Time", labely = "Time", cols = "blue", pcex = 1)
+
 # RP = res$RP
-# plotRP(RP, labelx = "Time", labely = "Time", show_ticks = TRUE, unit = 2,
-#       cols = "blue", pcex = 1)
+# plotRP(RP, par)
 }
 
 \keyword{misc}
