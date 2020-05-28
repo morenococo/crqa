@@ -3,7 +3,7 @@ Type: Package
 Title: Recurrence Quantification Analysis for Categorical and Continuous
     Time-Series
 Version: 2.0
-Date: 2019-10-24
+Date: 2020-05-28
 Authors@R: c(
     person("Moreno  I.", "Coco", role = c("cre","aut"), 
     email="moreno.cocoi@gmail.com"),
@@ -54,6 +54,5 @@ Collate:
     'spdiags.R'
     'wincrqa.R'
     'windowdrp.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 LazyData: true
-
