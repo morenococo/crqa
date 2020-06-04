@@ -53,15 +53,18 @@
 ##                maxlag  = 10 Default 
 ##                criterion = 'firstBelow' 'localMin'
 ##                threshold = exp(-1) Default
-
-nbins = 10; maxlag = 10; criterion = "firstBelow"; threshold = exp(-1)
+## nbins = 10; maxlag = 10; criterion = "firstBelow"; threshold = exp(-1)
 
 mdDelay = function(data, nbins = 10, maxlag = 10, criterion = "firstBelow",
                    threshold = exp(-1)){
   
   ## check the data type and possible errors in it
+  ## class argument in R 4.0 may return more than a single answer
+  ## we just consider the first one as valid
   
-  if (class(data) == "data.frame"){data = as.matrix(data)} ## convert data.frames into matrices
+  tdata = class(data)[1]
+  
+  if (tdata == "data.frame"){data = as.matrix(data)} ## convert data.frames into matrices
   
   if (sapply(data, is.numeric)[1] != TRUE){
     stop('Input is not numeric')}

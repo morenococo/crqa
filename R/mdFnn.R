@@ -52,8 +52,12 @@
 mdFnn = function(data, tau = 1, maxEmb = 10, numSamples = 500, Rtol = 10, Atol = 2){
   
   ## check the data type and possible errors in it
+  ## class() in R 4.0 may return more than a single answer
+  ## we just consider the first one as valid
   
-  if (class(data) == "data.frame"){data = as.matrix(data)} ## convert data.frames into matrices
+  tdata = class(data)[1]
+  
+  if (tdata == "data.frame"){data = as.matrix(data)} ## convert data.frames into matrices
   
   if (sapply(data, is.numeric)[1] != TRUE){
     stop('Input is not numeric')}
