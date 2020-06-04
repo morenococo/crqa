@@ -28,7 +28,7 @@ Description:
     as well as functions for optimization and plotting are proposed.
     in-depth measures of the whole cross-recurrence plot,
     Please refer to by Coco and Dale (2014) <doi:10.3389/fpsyg.2014.00510> 
-    and Wallot (2018) <doi: 10.1080/00273171.2018.1512846>
+    and Wallot (2018) <doi:10.1080/00273171.2018.1512846>
     for further details about the method.
 Depends:
     R (>= 3.0.0)
