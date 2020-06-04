@@ -20,8 +20,6 @@ bibentry(bibtype = "Article",
   volume       = "XXX",
   number       = "XXX",
   pages        = "XXX",
-  doi          = "https://arxiv.org/abs/2006.01954",
-
-  header       = "To cite crqa in publications use:"
+  doi          = "2006.01954"
 )
 
