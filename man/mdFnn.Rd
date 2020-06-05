@@ -43,7 +43,13 @@ Matlab. Front. Psychol. - Quantitative Psychology and Measurement
 
 \examples{
 
-## TODO
+tau = 1; maxEmb = 10; numSamples = 500; Rtol = 10; Atol = 2
+
+data(crqa) ## load the data
+
+handset = handmovement[1:300, ] ## take less points
+
+mdFnn(handset, tau, maxEmb, numSamples, Rtol, Atol)
 
 }
 

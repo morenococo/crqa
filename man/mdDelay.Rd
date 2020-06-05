@@ -42,7 +42,14 @@ Measurement}
 
 \examples{
 
-## TODO
+nbins = 10; maxlag = 10; criterion = "firstBelow"; threshold = exp(-1)
+
+data(crqa) ## load the data
+
+handset = handmovement[1:300, ] ## take less points
+
+mdDelay(handset, nbins, maxlag, criterion, threshold)
+
 
 
 }

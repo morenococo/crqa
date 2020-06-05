@@ -101,6 +101,28 @@ recpt, side, method, metric, datatype, trend)
 
 \examples{
 
-## TODO
+data(crqa) 
+
+listener = eyemovement$listener
+narrator = eyemovement$narrator
+
+delay = 1; embed = 1; rescale = 0; radius = 0.001;
+normalize = 0; mindiagline = 2; minvertline = 2;
+tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
+method = 'crqa'; metric = 'euclidean';  
+datatype = "continuous"; 
+windowsize =  100; windowstep = 20
+trend = FALSE
+
+ans = wincrqa(listener, narrator, windowstep, windowsize, delay, embed,
+                    radius, rescale, normalize, mindiagline, minvertline,
+                    tw, whiteline, recpt, side, method, metric, 
+                    datatype, trend)
+
+## other recurrence measures are available in ans
+winres  = as.data.frame(ans$crqwin)
+profile = as.numeric(winres$RR) 
+
+plot(profile, type = 'l')
 
 }
