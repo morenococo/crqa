@@ -94,8 +94,10 @@ on Matlab code by Sebastian Wallot}
 
 \examples{
 
-## generate some data
-# needs pracma
+## Uncomment and run locally
+
+## generate some data using pracma
+
 # ts1 = seq(0.1, 200, .1)
 # ts1 = sin(ts1) + linspace(0, 1,length(ts1));
 
