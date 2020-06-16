@@ -1,25 +1,26 @@
-## plotRP(): Function to plot the RP
+## plotRP(): Function to plot the recurrence plot
 ##
 ## Arguments:
-##     RP        : the RP ngCMatrix output from crqa() function
-##     labelx    : character ; the text label of the x-axis 
-##                 (default: "Time")
-##     labely    : character ; the text label of the y-axis 
-##                 (default: "Time")
-##     labelmain : character ; main title text of the plot 
-##                 (default: "Recurrence Plot")
-##     point_col : character ; the color for the recurrent points;
-##                 may include any colors from the base R plot repertoire
-##                 (default: "black)
-##     pcex      : numeric ; the size of the recurrent points
-##                 (default: .3)
-##     pch       : numeric ; the style of the recurrent points
-##                 (default: 1)
-##     show_ticks: boolean ; whether to show x- and y-ticks or not
-##                 (default: FALSE)
-##     unit      : numeric ; gap between sample labeling on axes.
-##                 Note: only relevant if `show_ticks = TRUE`.
-##                 (default: 10)
+##     RP          : the RP ngCMatrix output from crqa() function
+##     par         : a list of parameters for the plotting, including:
+##       unit      : numeric ; gap between sample labeling on axes.
+##                   Note: only relevant if `show_ticks = TRUE`.
+##                   (default: 10)
+##       labelmain : character ; main title text of the plot 
+##                   (default: "Recurrence Plot")
+##       labelx    : character ; the text label of the x-axis 
+##                   (default: "Time")
+##       labely    : character ; the text label of the y-axis 
+##                   (default: "Time")
+##       col       : character ; the color for the recurrent points;
+##                   may include any colors from the base R plot repertoire
+##                   (default: "black)
+##       pcex      : numeric ; the size of the recurrent points
+##                   (default: .3)
+##       pch       : numeric ; the style of the recurrent points
+##                   (default: 1)
+##       show_ticks: boolean ; whether to show x- and y-ticks or not
+##                   (default: FALSE)
 ##
 ## Value:
 ##     A square plot visualizing the recurrence matrix.
@@ -28,11 +29,35 @@
 
 .packageName <- 'crqa'
 
-plotRP <- function(RP, 
-                   labelx = "Time", labely = "Time", 
-                   labelmain = "Recurrence Plot",
-                   point_col = "black", pcex = .3, pch = 1,
-                   unit = 10, show_ticks = FALSE){
+plotRP <- function(RP, par){
+  
+  # specify the space of possible parameters
+  default_par = c(labelx = "Time",
+                  labely = "Time",
+                  labelmain = "Recurrence Plot",
+                  point_col = "black",
+                  pcex = .3, 
+                  pch = 1,
+                  unit = 10,
+                  show_ticks = FALSE)
+  
+  # if no user-defined parameters exist, use defaults
+  if (exists("par") == FALSE){ 
+    for (default_v in 1:length(default_par)){ 
+      assign(names(default_par)[default_v], default_par[[default_v]])
+    }
+  } else {
+    
+    # define user-defined variables
+    for (v in 1:length(par)){ assign(names(par)[v], par[[v]]) }
+    
+    # find which labels have not been user-defined and use defaults
+    undefined_par = names(default_par)[!names(default_par) %in% names(par)]
+    use_defaults = default_par[undefined_par]
+    for (default_v in 1:length(use_defaults)){
+      assign(names(use_defaults)[default_v], use_defaults[[default_v]])
+      }
+  }
   
   # find the size of the RP
   xdim   = nrow(RP)
