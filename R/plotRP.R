@@ -12,7 +12,7 @@
 ##                   (default: "Time")
 ##       labely    : character ; the text label of the y-axis 
 ##                   (default: "Time")
-##       col       : character ; the color for the recurrent points;
+##       cols      : character ; the color for the recurrent points;
 ##                   may include any colors from the base R plot repertoire
 ##                   (default: "black)
 ##       pcex      : numeric ; the size of the recurrent points
@@ -35,7 +35,7 @@ plotRP <- function(RP, par){
   default_par = c(labelx = "Time",
                   labely = "Time",
                   labelmain = "Recurrence Plot",
-                  point_col = "black",
+                  cols = "black",
                   pcex = .3, 
                   pch = 1,
                   unit = 10,
@@ -81,7 +81,7 @@ plotRP <- function(RP, par){
        font = 2)
   
   # add recurrent points to the plot
-  matpoints(ind[,1], ind[,2], cex = as.numeric(pcex), col = point_col, pch = as.numeric(pch))
+  matpoints(ind[,1], ind[,2], cex = as.numeric(pcex), col = cols, pch = as.numeric(pch))
   
   # add x- and y-axis labels to the plot (so they're not too far away)
   mtext(labelx, at = mean(tstamp), side = 1, line = 1.1, cex = 1.2, font = 2)
