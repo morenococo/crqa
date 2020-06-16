@@ -98,6 +98,7 @@ plotRP <- function(RP, par){
   
   # create variable to save plot
   output_plot = recordPlot()
+  invisible(dev.off())
   
   # return the plot
   return(output_plot)
