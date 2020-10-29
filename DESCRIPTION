@@ -2,7 +2,7 @@ Package: crqa
 Type: Package
 Title: Recurrence Quantification Analysis for Categorical and Continuous
     Time-Series
-Version: 2.0
+Version: 2.0.1
 Date: 2020-05-28
 Authors@R: c(
     person("Moreno  I.", "Coco", role = c("cre","aut"), 
@@ -38,6 +38,7 @@ Imports:
     tseriesChaos,
     gplots,
     plot3D,
+    FSA,
     rdist
 License: GPL (>= 2)
 Collate:
