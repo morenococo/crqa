@@ -1,5 +1,15 @@
 # crqa (cross-recurrence quantification analysis)
 
+# crqa 2.0.4
+
+* Mostly fixed a couple of minor issues with wincrqa()
+  * Added a warning in wincrqa() when users set delay and embedding dimension bigger than window size.
+  * Added the calculation of nr. of windows for method `rqa`, i.e., unidimensional recurrence, which was missing
+
+* Removed from `crqa_package.Rd` information about package version as it was conflicting with DESCRIPTION
+
+* Added proper article CITATION to the package
+
 # crqa 2.0.3
 
 * Fixed minor bug on drpfromts() when method was `mdcrqa`. The argument `datatype` was forcing the input data to be in vector form, and should instead be left as a matrix. Added if statement to check (line 25)
