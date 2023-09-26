@@ -18,6 +18,7 @@
     and Wallot (2018) <doi: 10.1080/00273171.2018.1512846>
     for further details about the method.
 }
+
 \details{
 
 \code{crqa}: Core recurrence function, which examines
