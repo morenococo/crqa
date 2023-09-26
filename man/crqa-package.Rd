@@ -19,14 +19,6 @@
     for further details about the method.
 }
 \details{
-\tabular{ll}{
-Package: \tab crqa\cr
-Type: \tab Package\cr
-Version: \tab 2.0\cr
-Date: \tab 2019-10-20\cr
-License: \tab GPL >= 2\cr
-}
-
 
 \code{crqa}: Core recurrence function, which examines
   recurrent structures of a single rqa, two crqa, 
@@ -100,6 +92,10 @@ if an appropriate size for the block is found.
   Marwan, N., and Kurths, J. Nonlinear analysis of bivariate
   data with cross recurrence plots. Physics Letters A 302.5
   (2002): 299-307.
+  
+  Coco, M. I., Mønster, D., Leonardi, G., Dale, R., & Wallot, S. (2021). 
+  Unidimensional and Multidimensional Methods for Recurrence 
+  Quantification Analysis with crqa. R Journal, 13(1).
   
 }
 
