@@ -31,18 +31,18 @@
 
 plotRP <- function(RP, par){
   
+  ## default values for plotting
+  # initialize variable to go around global visible binding
   # specify the space of possible parameters
-  default_par = c(labelx = "Time",
-                  labely = "Time",
-                  labelmain = "Recurrence Plot",
-                  cols = "black",
-                  pcex = .3, 
-                  pch = 1,
-                  unit = 10,
-                  show_ticks = FALSE)
+  
+  labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot"; cols = "black" 
+  pcex = .3; pch = .3; unit = 10; show_ticks = FALSE 
+  
+  default_par = data.frame(labelx, labely, labelmain, cols,
+                  pcex, pch, unit, show_ticks)
   
   # if no user-defined parameters exist, use defaults
-  if (exists("par") == FALSE){ 
+  if (exists("par") == FALSE){
     for (default_v in 1:length(default_par)){ 
       assign(names(default_par)[default_v], default_par[[default_v]])
     }

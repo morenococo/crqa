@@ -124,8 +124,8 @@ wincrqa <- function(ts1, ts2, windowstep, windowsize, delay, embed,
           
           # k = 2
           for (k in 1:(NX-1)){  ##ixi_diag
-            print(diags(RP, k)) ## check the diagonal
-            ixi_rec = which(diags(RP, k) != F) ## find recurrence
+            # print(diags_extract(RP, k)) ## check the diagonal
+            ixi_rec = which(diags_extract(RP, k) != F) ## find recurrence
             T[k] = length(ixi_rec)/ (NX-k)*100;
           }
           
