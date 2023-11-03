@@ -29,35 +29,15 @@
 
 .packageName <- 'crqa'
 
-plotRP <- function(RP, par){
-  
-  ## default values for plotting
-  # initialize variable to go around global visible binding
-  # specify the space of possible parameters
-  
-  labelx = "Time"; labely = "Time"; labelmain = "Recurrence Plot"; cols = "black" 
-  pcex = .3; pch = .3; unit = 10; show_ticks = FALSE 
-  
-  default_par = data.frame(labelx, labely, labelmain, cols,
-                  pcex, pch, unit, show_ticks)
-  
-  # if no user-defined parameters exist, use defaults
-  if (exists("par") == FALSE){
-    for (default_v in 1:length(default_par)){ 
-      assign(names(default_par)[default_v], default_par[[default_v]])
-    }
-  } else {
-    
-    # define user-defined variables
-    for (v in 1:length(par)){ assign(names(par)[v], par[[v]]) }
-    
-    # find which labels have not been user-defined and use defaults
-    undefined_par = names(default_par)[!names(default_par) %in% names(par)]
-    use_defaults = default_par[undefined_par]
-    for (default_v in 1:length(use_defaults)){
-      assign(names(use_defaults)[default_v], use_defaults[[default_v]])
-      }
-  }
+plotRP <- function(RP,
+                   labelx = "Time", 
+                   labely = "Time", 
+                   labelmain = "Recurrence Plot", 
+                   cols = "black",
+                   pcex = .3, 
+                   pch = .3, 
+                   unit = 10, 
+                   show_ticks = FALSE){
   
   # find the size of the RP
   xdim   = nrow(RP)
