@@ -241,34 +241,43 @@ diags_extract <- function(x, which = 0,incl.labels = c("none","row","column"),
 # its block membership
 # ===============================================================
 # creator: Giuseppe Leonardi (giuleonardi@gmail.com)
-# integrated and modified by Moreno I. Coco (moreno.cocoi@gmail.com)
+# integrated and modified by Moreno I. Coco (moreno.cocoi@gmail.com) & Alexandra Paxton (alexandra.paxton@uconn.edu)
 
 
 findBlocks <- function(ind_c, size) {
 
-  lt    = nrow(ind_c) ## the number of datapoints
+  # get the total number of possible points in the RP
+  lt    = nrow(ind_c)
 
-  ind_c = as.list(as.data.frame(ind_c)) ## working with lists that consume less memory
-  # print(dim(ind_c))
+  # convert the index matrix to a list
+  ind_c = as.list(as.data.frame(ind_c))
+
+  # keep track of when
   blocks = list(lastSeenRow = integer(size[1]),
                 lastSeenCol = integer(size[2]),
                 gr = integer(lt))
 
-  # k = 1
-  # i = 1
+  # initialize block counter
   ngr = 0 # initialize the counter of blocks
 
+  # cycle through each possible point
   for(k in 1:lt) {
+
+    # find the next point in the matrix
     kr <- ind_c$row[k]
     kc <- ind_c$col[k]
-    # print(c(k, kr, kc))
+    #print(c(k, kr, kc))
     i <- blocks$lastSeenRow[kr]
     j <- blocks$lastSeenCol[kc]
 
-    if (i && (abs(kc - ind_c$col[i]) == 1))      blocks$gr[k] = blocks$gr[i]
-    else if (j && (abs(kr - ind_c$row[j]) == 1)) blocks$gr[k] = blocks$gr[j]
-    else {
-      ngr <- ngr + 1L; blocks$gr[k] = ngr
+    # identify which points actually exist and are contiguous
+    if (!is.na(i) && i > 0 && (abs(kc - ind_c$col[i]) == 1))      {
+      blocks$gr[k] = blocks$gr[i]
+    } else if ((!is.na(j)) && j > 0 && ((abs(kr - ind_c$row[j]) == 1))) {
+      blocks$gr[k] = blocks$gr[j]
+    } else {
+      ngr <- ngr + 1L;
+      blocks$gr[k] = ngr
     }
 
     blocks$lastSeenRow[kr] <- k
