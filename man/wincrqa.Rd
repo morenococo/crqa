@@ -111,7 +111,7 @@ normalize = 0; mindiagline = 2; minvertline = 2;
 tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
 method = 'crqa'; metric = 'euclidean';  
 datatype = "continuous"; 
-windowsize =  100; windowstep = 20
+windowsize =  400; windowstep = 50
 trend = FALSE
 
 ans = wincrqa(listener, narrator, windowstep, windowsize, delay, embed,

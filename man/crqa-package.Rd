@@ -4,8 +4,7 @@
 \docType{package}
 
 \title{
-  Cross-Recurrence Quantification Analysis for Continuous and
-  Categorial Time-series
+  Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis
 }
 
 \description{
@@ -81,7 +80,12 @@ if an appropriate size for the block is found.
 
 }
 
-\author{Moreno I. Coco (moreno.cocoi@gmail.com)}
+\author{Moreno I. Coco \email{moreno.cocoi@gmail.com}
+    Dan Monster \email{danm@econ.au.dk}
+    Giuseppe Leonardi \email{g.leonardi@vizja.pl}
+    Rick Dale \email{rdale@ucla.edu} 
+    Sebastian Wallot \email{sebastian.wallot@ae.mpg.de} 
+    }
 
 \references{
   
@@ -94,7 +98,7 @@ if an appropriate size for the block is found.
   data with cross recurrence plots. Physics Letters A 302.5
   (2002): 299-307.
   
-  Coco, M. I., Mønster, D., Leonardi, G., Dale, R., & Wallot, S. (2021). 
+  Coco, M. I., Monster, D., Leonardi, G., Dale, R., & Wallot, S. (2021). 
   Unidimensional and Multidimensional Methods for Recurrence 
   Quantification Analysis with crqa. R Journal, 13(1).
   

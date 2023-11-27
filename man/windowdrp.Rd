@@ -110,8 +110,8 @@ delay = 1; embed = 1; rescale = 1; radius = 0.001;
 normalize = 0; mindiagline = 2; minvertline = 2;
 tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
 method = 'crqa'; metric = 'euclidean';  
-datatype = "continuous"; windowsize =  200; 
-lagwidth = 40; windowstep = 10
+datatype = "continuous"; windowsize =  400; 
+lagwidth = 40; windowstep = 50
 
 ans = windowdrp(narrator, listener, windowstep, windowsize, lagwidth, 
                 radius, delay, embed, rescale, normalize, 

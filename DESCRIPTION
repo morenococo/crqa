@@ -56,7 +56,7 @@ Collate:
     'windowdrp.R'
 RoxygenNote: 7.2.1
 LazyData: true
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr
 Encoding: UTF-8
 Suggests: knitr, rmarkdown
 
