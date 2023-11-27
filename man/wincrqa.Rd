@@ -83,7 +83,8 @@ recpt, side, method, metric, datatype, trend)
 
 }
 
-\author{Moreno I. Coco (moreno.cocoi@gmail.com) }
+\author{Moreno I. Coco (moreno.cocoi@gmail.com)
+Alexandra Paxton \email{alexandra.paxton@uconn.edu}}
 
 \note{If no-recurrence is found in a window,
   that window will not be saved, and a message
@@ -91,9 +92,13 @@ recpt, side, method, metric, datatype, trend)
   TREND is implemented following a solution proposed
   by Norbert Marwan, and translated here in R,
   for those who have asked him.
-  He, however warns that this measure might strongly depend
+  He, however, warns that this measure might strongly depend
   on the chosen settings to calculate crq.
-  Relying on such measure can, therefore, produce misleading results.
+  Relying blindly on such measure can, therefore, produce misleading results.
+  Also, we enabled the possibility to input directly a RP with recpt = T, 
+  and so extract the measures. This implies that it will not be the same 
+  as by conducting phase-space reconstruction on subsets of the time series.  
+  So, please, make sure why you are doing it and why.
   }
 
 
@@ -103,15 +108,18 @@ recpt, side, method, metric, datatype, trend)
 
 data(crqa) 
 
-listener = eyemovement$listener
-narrator = eyemovement$narrator
+listener = eyemovement$listener[1:200]
+narrator = eyemovement$narrator[1:200]
+
+# NB, the parameters for windowsize and windowstep are large to allow
+# faster running time, please set them carefully in your analysis. 
 
 delay = 1; embed = 1; rescale = 0; radius = 0.001;
 normalize = 0; mindiagline = 2; minvertline = 2;
 tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
 method = 'crqa'; metric = 'euclidean';  
 datatype = "continuous"; 
-windowsize =  400; windowstep = 50
+windowsize =  100; windowstep = 50
 trend = FALSE
 
 ans = wincrqa(listener, narrator, windowstep, windowsize, delay, embed,
