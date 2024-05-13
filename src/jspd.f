@@ -43,7 +43,7 @@ C      print 1000, (Adata(i), i=1,mn)
  25   continue
 C      print *, "Augmented Adata with ", je,"  elements"
 C      print 1000,(Adata(i), i=1,je)
- 1000 FORMAT(1H ,25f4.0)
+C 1000 FORMAT(I1 ,25f4.0)
       do 100 i=1,q
           qx = k*(i-1)+1
 C          print *,"Top element is no ",qx,"=",Adata(qx)
