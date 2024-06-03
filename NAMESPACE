@@ -8,6 +8,7 @@ export(crqa,
        optimizeParam,
        piecewiseRQA,
        plotRP,
+       plot_rp,
        simts,
        spdiags,
        wincrqa,
@@ -23,3 +24,5 @@ importFrom("stats", sd, median, rnorm, runif, var)
 importFrom("rdist", cdist)
 importFrom("tseriesChaos", mutual, false.nearest)
 importFrom("utils", tail)
+importFrom("dplyr", filter, mutate)
+import("ggplot2")
