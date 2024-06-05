@@ -40,7 +40,9 @@ Imports:
     tseriesChaos,
     gplots,
     plot3D,
-    rdist
+    rdist,
+    dplyr,
+    ggplot2
 License: GPL (>= 2)
 Collate:
     'crqa.R'
@@ -52,6 +54,7 @@ Collate:
     'optimizeParam.R'
     'piecewiseRQA.R'
     'plotRP.R'
+    'plot_rp.R'
     'simts.R'
     'spdiags.R'
     'wincrqa.R'
