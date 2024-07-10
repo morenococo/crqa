@@ -1,6 +1,5 @@
 ## GNU > 2 License:
 ## written by Moreno I. Coco (moreno.cocoi@gmail.com) and James Dixon
-## Additional contributions by Alexandra Paxton
 
 ## Iterative procedure exploring a combination of parameter values
 ## to obtain maximal recurrence between two time-series

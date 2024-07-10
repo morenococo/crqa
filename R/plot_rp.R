@@ -1,6 +1,9 @@
 # A ggplot2-based function to produce a recurrence plot from a
 # matrix. Much faster than using graphics::image() and nicer than
 # crqa::plotRP().
+# Author Dan Moester
+.packageName <- 'crqa'
+
 plot_rp <- function(rp_matrix,
                     title = "",
                     xlabel = "Time",
@@ -8,6 +11,10 @@ plot_rp <- function(rp_matrix,
                     pcolour = "black",
                     geom = c("tile", "point", "void"),
                     flip_y = FALSE) {
+  
+  ## make globally visible some objects that will later on be filled in
+  Var1 = Var2 = value = NA
+  
   geom <- match.arg(geom)
   # In most cases rp_matrix is a sparse matrix from the Matrix package,
   # so we convert it to a regular matrix first.
