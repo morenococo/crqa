@@ -1,6 +1,6 @@
 # Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis with crqa.
 
-The crqa, R package, allows users to conduct a wide range of recurrence-based analyses on single (e.g., auto-recurrence) and multivariate time series (e.g., multidimensional cross-recurrence quantification), examine coupling properties underlying leader-follower relationships (i.e., diagonal-profile methods), as well as, track the evolution of recurrence rate over the time course (i.e., windowed methods).
+The crqa R package allows users to conduct a wide range of recurrence-based analyses on single (e.g., auto-recurrence) and multivariate time series (e.g., multidimensional cross-recurrence quantification), examine coupling properties underlying leader-follower relationships (i.e., diagonal-profile methods), as well as track the evolution of recurrence rate over the time course (i.e., windowed methods).
 
 ## Installation
 
@@ -114,10 +114,6 @@ results = unlist(ans[1:10])
 print(results)
 ```
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
-
 ## Authors
 
 * **Moreno I Coco** - *role = [cre, aut]* - (moreno.cocoi@gmail.com)
@@ -126,10 +122,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Rick Dale** - *role = [aut]* - (rdale@ucla.edu)
 * **Sebastian Wallot** - *role = [aut] - (sebastian.wallot@ae.mpg.de)
 
-## License
-
 ## Acknowledgments
 
 * **James D. Dixon** - *role = [ctb]* - (james.dixon@uconn.edu)
 * **John  C. Nash** - *role = [ctb]* -  (nashjc@uottawa.ca)
-* **Alexandra Paxton** - *role = [ctb]* - (alexandra.paxton@uconn.edu)
+* **Alexandra Paxton** -*role = [ctb]* - (alexandra.paxton@uconn.edu)

@@ -1,12 +1,12 @@
 Package: crqa
 Type: Package
 Title: Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis 
-Version: 2.0.5
-Date: 2023-11-06
+Version: 2.0.6
+Date: 2024-06-03
 Authors@R: c(
     person("Moreno  I.", "Coco", role = c("cre","aut"), 
     email="moreno.cocoi@gmail.com"),
-    person("Dan"," Monster", role = "aut", 
+    person("Dan"," Mønster", role = "aut", 
     email = "danm@econ.au.dk"),
     person("Giuseppe","Leonardi", role = "aut", 
     email = "g.leonardi@vizja.pl"), 
@@ -37,13 +37,12 @@ Depends:
 Imports:
     Matrix,
     pracma,
-    tseriesChaos,
-    gplots,
-    plot3D,
     rdist,
+    tseriesChaos, 
+    gplots,
     dplyr,
     ggplot2
-License: GPL (>= 2)
+License: GPL (>= 3)
 Collate:
     'crqa.R'
     'crqa_helpers.R'
@@ -53,13 +52,12 @@ Collate:
     'mdFnn.R'
     'optimizeParam.R'
     'piecewiseRQA.R'
-    'plotRP.R'
     'plot_rp.R'
     'simts.R'
     'spdiags.R'
     'wincrqa.R'
     'windowdrp.R'
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 LazyData: true
 VignetteBuilder: knitr
 Encoding: UTF-8

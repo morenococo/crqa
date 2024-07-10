@@ -6,7 +6,8 @@ Plot a recurrence matrix
 }
 
 \description{
-Given a recurrence matrix returned from the function  \code{crqa()}
+Given a recurrence plot object (RP) returned from the function  \code{crqa()}, 
+visualize it.
 }
 
 \usage{
@@ -15,7 +16,7 @@ plot_rp(rp_matrix,
         xlabel = "Time",
         ylabel = "Time",
         pcolour = "black",
-        geom = c("tile", "point"),
+        geom = c("tile", "point", "void"),
         flip_y = FALSE)
 }
 
@@ -32,8 +33,8 @@ plot_rp(rp_matrix,
   The value \code{"point"} uses \code{geom_point()} to plot the points, and
   the value \code{"void"} produces a plot without any geom, so users can
   add their own for a more costumized plot (see examples below).}
-  \item{flip_y}{Logical argument controlling whether to flip the y axis
-  (logical). Default: \code{FALSE}}
+  \item{flip_y}{Logical argument controlling whether to flip the directionality of
+  the y axis (logical). Default: \code{FALSE}}
 }
 
 \details{
@@ -53,36 +54,11 @@ Mønster, D. \email{danm@econ.au.dk}
 }
 
 \seealso{
-This is an alternative to \code{plotRP()}. For large recurrence plots,
-\code{plot_rp()} is usually faster.
+This plotting solution as substituted what was previously \code{plotRP()} 
+available till version crqa.2.0.5
 }
 
 \examples{
-# Use the eyemovement dataset to create a cross-recurrence plot
-large_crqa <- crqa(eyemovement$narrator, eyemovement$listener,
-                delay = 1, embed = 1, radius = 0.001,
-                method = "crqa", metric = "euclidean", datatype = "continuous")
-
-# Extract the recurrence matrix from the result
-large_rp <- large_crqa$RP
-
-# Create a recurrence plot using defaults
-plot_rp(large_rp)
-
-# The same recurrence plot with flipped y axis and using geom_point()
-plot_rp(large_rp, flip_y = TRUE, geom = "point", title = "Flipped y axis") 
-
-# Add axes labels, a title and extra plot elements
-# Note that we can add to the output, here added the line of synchonization
-# using ggplot2's geom_abline() function.
-plot_rp(large_rp, 
-        xlabel = "Narrator",
-        ylabel = "Listener",
-        title = "Coloured tiles with line of synchronization",
-        pcolour = "blue") +
-  geom_abline(intercept = 0, slope = 1)
-
-
 # Here is a very short example based on these two time series
 ts_1 <-  c(0, 0, 1, 1, 0, 0, 2, 2, 1, 1)
 ts_2 <-  c(1, 1, 2, 2, 0, 0, 1, 2, 2, 1)
@@ -101,24 +77,41 @@ plot_rp(small_rp, pcolour  = "blue", geom = "tile")
 # Make a cross recurrenbce plot with blue points
 plot_rp(small_rp, pcolour  = "blue", geom = "point")
 
+## Uncomment below if you want to have more example. Not runnable because
+## of CRAN, globally unavailable function plus timing constraint to check vignette.
+
 # Neither of the two plots above may be suitable
 # Using geom = "void" we can add a custumized geom, here blue tiles
 # that are smaller than the default width and height
-plot_rp(small_rp, geom = "void") +
-  geom_tile(fill = "blue", height = 0.75, width = 0.75)
+# plot_rp(small_rp, geom = "void") +
+#  geom_tile(fill = "blue", height = 0.75, width = 0.75)
 
 # Another custom geom uses tiles with a border colour
-plot_rp(small_rp, geom = "void") +
-  geom_tile(fill = "blue", colour = "pink", linewidth = 1)
+# plot_rp(small_rp, geom = "void") +
+#  geom_tile(fill = "blue", colour = "pink", linewidth = 1)
+
+# Use the eyemovement dataset to create a cross-recurrence plot
+# large_crqa <- crqa(eyemovement$narrator, eyemovement$listener,
+#                delay = 1, embed = 1, radius = 0.001,
+#                method = "crqa", metric = "euclidean", datatype = "continuous")
+
+# Extract the recurrence matrix from the result
+# large_rp <- large_crqa$RP
+
+# Create a recurrence plot using defaults
+# plot_rp(large_rp)
+
+# The same recurrence plot with flipped y axis and using geom_point()
+# plot_rp(large_rp, flip_y = TRUE, geom = "point", title = "Flipped y axis") 
+
+# Add axes labels, a title and extra plot elements
+# Note that we can add to the output, here added the line of synchonization
+# using ggplot2's geom_abline() function.
+# plot_rp(large_rp, 
+#        xlabel = "Narrator",
+#        ylabel = "Listener",
+#        title = "Coloured tiles with line of synchronization",
+#        pcolour = "blue") +
+#  geom_abline(intercept = 0, slope = 1)
 
 }
-
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.

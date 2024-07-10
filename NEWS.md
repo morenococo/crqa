@@ -1,9 +1,35 @@
 # crqa (cross-recurrence quantification analysis)
 
+# crqa 2.0.6
+
+* Rewritten jspd.f from 77 to Fortran compiler 90/95 (jspd.f90)
+
+* Substituted the plotRP function with a more modern and customizable plot_rp function which is build on top of the ggplot2() ecosystem
+
+* Added a method check to crqa() such that it will stop, rather than simply default, if one of the methods available is not correctly specified
+
+* When method "mdcrqa" is used within crqa(), time-series will be z-scored using the scale() function as to keep each time-series independently 
+
+* Removed the plot3D option from lorenzattractor.R and so the dependency to this package.
+
+* Fixed the mdFnn function such that the first estimate for the embedding parameter is contingent on the data structure.  Also, relaxed the constraint that the size of the data matrix must be bigger 1, so that the function can be used with unidimensional time series.
+
+* In optimizeParam(), when estimating false.nearest we incorporate the identified optimal delay and (if it exists) the user-specified maximum embedding dimension.
+
+# crqa 2.0.5
+
+* Amended plotRP() to handle better visualization 
+
+* Checked calculation of categorical entropy (catH) and adjusted threshold to < .01 to compute it 
+
+* Fixed issues with introducing RPs as argument for wincrqa 
+
 # crqa 2.0.4
 
 * Mostly fixed a couple of minor issues with wincrqa()
+
   * Added a warning in wincrqa() when users set delay and embedding dimension bigger than window size.
+  
   * Added the calculation of nr. of windows for method `rqa`, i.e., unidimensional recurrence, which was missing
 
 * Removed from `crqa_package.Rd` information about package version as it was conflicting with DESCRIPTION
