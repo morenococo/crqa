@@ -332,7 +332,7 @@ crqa <- function(ts1, ts2, delay = 1, embed = 1, rescale = 0,
     diaglines = sort( diff(which(B == FALSE) ) -1, decreasing = TRUE)
     
     ## Delete line counts less than the minimum diagonal.
-    diaglines = diaglines[-which(diaglines < mindiagline)]
+    diaglines = diaglines[diaglines >= mindiagline]
     ## diaglines(diaglines>200)=[]; # Can define a maximum line length too.
     
     ## exlude the rare cases where there are no diaglines
