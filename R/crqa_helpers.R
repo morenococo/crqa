@@ -480,7 +480,7 @@ tt <- function(x, minvertline, whiteline){
   
   
   t = sort(z1-z0);
-  t1 = t[t >= minvertline)]
+  t1 = t[t >= minvertline]
   
   TT = mean(t1) ## trapping time
   
