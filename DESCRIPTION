@@ -1,8 +1,8 @@
 Package: crqa
 Type: Package
 Title: Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis 
-Version: 2.0.6
-Date: 2024-06-03
+Version: 2.0.7
+Date: 2025-06-25
 Authors@R: c(
     person("Moreno  I.", "Coco", role = c("cre","aut"), 
     email="moreno.cocoi@gmail.com"),
@@ -57,7 +57,7 @@ Collate:
     'spdiags.R'
     'wincrqa.R'
     'windowdrp.R'
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 LazyData: true
 VignetteBuilder: knitr
 Encoding: UTF-8
