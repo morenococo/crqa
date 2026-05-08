@@ -1,0 +1,82 @@
+---
+title: "check %REC calculation"
+output: html_document
+date: "2026-05-06"
+---
+
+
+```{r}
+library(crqa)
+
+# load modified function into an isolated environment
+tmp_env <- new.env()
+source("R/crqa.R", local = tmp_env)
+
+# replace original with modified function inside crqa package
+environment(tmp_env$crqa) <- asNamespace("crqa")
+
+unlockBinding("crqa", asNamespace("crqa"))
+assign("crqa", tmp_env$crqa, envir = asNamespace("crqa"))
+lockBinding("crqa", asNamespace("crqa"))
+
+pkg_env <- as.environment("package:crqa")
+
+unlockBinding("crqa", pkg_env)
+assign("crqa", tmp_env$crqa, envir = pkg_env)
+lockBinding("crqa", pkg_env)
+```
+
+
+# Calculate %REC a priori on sample time series
+```{r}
+ts <- c(1, 2, 3, 4, 4, 4, 6, 7, 8, 9)
+
+N = 10
+rp = 6
+
+rr <- (rp / (N**2 - N)) * 100 # exclude LOI
+
+print(paste0("%REC=", round(rr, 2)))
+```
+
+
+# Test package, side=both
+```{r}
+ts_result <- crqa(ts, ts, 
+               delay = 0, 
+               embed = 1, 
+               rescale = 2, # max dist
+               radius = 0.01,
+               normalize = 0, # do nothing
+               mindiagline = 2, 
+               minvertline = 2,
+               tw = 1,
+               side = "both",
+               method = "rqa",
+               metric = "euclidean",
+               datatype = "continuous")
+
+plot_rp(ts_result$RP)
+print(paste0('%REC=', round(ts_result$RR,2)))
+```
+
+
+# Test package, side=upper/lower
+```{r}
+ts_result <- crqa(ts, ts, 
+               delay = 0, 
+               embed = 1, 
+               rescale = 2, # max dist
+               radius = 0.01,
+               normalize = 0, # do nothing
+               mindiagline = 2, 
+               minvertline = 2,
+               tw = 1,
+               side = "upper",
+               method = "rqa",
+               metric = "euclidean",
+               datatype = "continuous")
+
+plot_rp(ts_result$RP)
+print(paste0('%REC=', round(ts_result$RR,2)))
+```

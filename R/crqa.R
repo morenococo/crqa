@@ -286,10 +286,45 @@ crqa <- function(ts1, ts2, delay = 1, embed = 1, rescale = 0,
     spdiagonalize = spdiags(S) ##  spdiags should have decent speed 
     B = spdiagonalize$B
     
+    ##calculate region of interest for recurrences (denominator)
+    
+    theiler_exclusion <- function(m, w){ # assumes square matrix
+    
+      ## if tw=0, no points are excluded
+      if (w <= 0){
+        return(0)
+      }
+      
+      # ## count matrix elements within the theiler window
+      # excluded <- 0
+      # for (diag in c(-(w-1):w-1)){
+      #   d_len <- m - diag
+      #   excluded <- excluded + d_len
+      # }
+      
+      ## analytic solution
+      excluded <- (2*w*m) - (w^2) + w - m
+      
+      return(excluded)
+    }
+    
+    if (side %in% c("upper", "lower")){
+      
+      if (tw==0){
+        warning ("tw=0 not valid for side=upper/lower; using tw=1 to calculate RR")
+        region <- ((v1l*v2l) - theiler_exclusion(v1l, 1))/2
+      } else {
+        region <- ((v1l*v2l) - theiler_exclusion(v1l, tw))/2
+      }
+    
+    } else {
+      region <- (v1l*v2l) - theiler_exclusion(v1l, tw)
+    }
+
     ##calculate percentage recurrence by taking all non-zeros
     
     numrecurs = length(which(B == TRUE));
-    percentrecurs = (numrecurs/((v1l*v2l)))*100;
+    percentrecurs = (numrecurs/region)*100;
     
     ####################################################################
     ####################################################################
