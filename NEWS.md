@@ -1,5 +1,81 @@
 # crqa (cross-recurrence quantification analysis)
 
+# crqa 2.1.0 (2026-05-14, final)
+
+A major performance and modernisation update. All numerical outputs are
+backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
+(see "Behavioural changes" below).
+
+## Performance (Stage 3b additions, 2026-05-14)
+
+* **Fortran backend retired.** `src/jspd.f90` and `src/init.c` deleted;
+  `spdiags()` reimplemented as ~30 lines of vectorised pure R. Package
+  becomes `NeedsCompilation: yes` only for the new C++ kernel (not
+  Fortran). Removes the Windows Rtools 4.5 / GCC 14 DLL crash that
+  affected v2.1.0-dev builds.
+
+* **Fused Rcpp inner loop** (`src/crqa_fused.cpp`). When `metric` is
+  `"euclidean"`, `"maximum"` or `"manhattan"` (the common cases), the
+  entire `cdist → dm → threshold → sparseMatrix → theiler → line_stats`
+  chain is replaced by a single C++ pass that never materialises the
+  N×N distance matrix or recurrence plot. Memory is O(N + nnz) instead
+  of O(N²); runtime is 5–15× faster than the Stage 2 path at N ≥ 2000.
+  Other metrics still go through the legacy `cdist`-based path (exact
+  same outputs).
+
+  Benchmarks at embed = 3, Gaussian input:
+
+  | N | fused | legacy (Stage 2) | speedup | RAM ratio |
+  |---|---|---|---|---|
+  | 2 000 | 0.044 s | 0.653 s | 14.9× | 1.5× |
+  | 4 000 | 0.169 s | 2.34 s | 13.9× | 2.7× |
+  | 8 000 | 0.77 s | (1.3 GB) | — | ≥ 7× |
+  | 16 000 | 4.15 s | OOM | — | — |
+
+* **In-place rescale.** When `rescale > 0`, the rescaling factor is
+  now folded into `radius` before entering the fused kernel (`dm / s <=
+  r` ⟺ `dm <= r * s`), so no second N×N copy of `dm` is allocated.
+  Halves peak RAM at `rescale > 0` vs the Stage 2 path.
+
+* **`crqa_memory_estimate(N, ...)`** — new helper that predicts peak
+  RAM for the fused and legacy paths and recommends a method.
+
+## Performance
+
+* **Stage 1 — outer-loop parallelism.** `wincrqa()`, `windowdrp()` and `piecewiseRQA()` now accept a `workers` argument (default `max(1L, future::availableCores() - 1L)`) and dispatch their per-window / per-block computations via `future` + `furrr`. Setting `workers = 1` reproduces the previous serial behaviour. Each worker still pays the full per-window RAM cost — see the documentation for usage notes.
+
+* **Stage 2 — `line_stats()` replaces the `spdiags` + `tt` chain.** Inside `crqa()`, the dense `B` matrix from `spdiags()` plus the `tt()` vertical scan are no longer materialised. A single pass over the sparse recurrence indices computes `diaglines`, `lam`, `TT` and `max_vertlength` in `O(k log k)` time instead of `O(N^2)`. Empirical scaling exponent dropped from 2.26 to 1.79 on the Roessler benchmark; per-call wall time at N=10000 dropped from ~22s to ~4s; the maximum N reachable within a 30-second budget grew from ~10,500 to ~25,000.
+
+## Behavioural changes
+
+* **`RR` denominator now excludes Theiler-blanked and side-blanked cells.** A new helper `theiler_exclusion(m, n, w)` computes the exact number of cells in the Theiler band of width `w` for an arbitrary `m x n` matrix (works for rectangular RPs). For `tw = 0` and `side = "both"`, `RR` is identical to v2.0.7; otherwise it is larger than before by a factor of `(v1l * v2l) / region`, because Theiler/side-blanked cells no longer inflate the denominator. Concept adapted from pjbruna's community PR, generalised to rectangular matrices, and with the silent `tw = 0 -> tw = 1` coercion removed.
+
+* **The `whiteline` argument is now ignored inside `crqa()`.** In all prior versions, `tt()` was called with this argument but its white-line output was never returned in the results list. The behaviour is therefore unchanged for users; `whiteline` remains in the function signature for backward compatibility but no longer affects timings. Callers who need white-line statistics can still invoke `tt()` directly.
+
+## New functions
+
+* `theiler_exclusion(m, n = m, w = 1)` — analytic cell count for the Theiler band (square and rectangular RPs).
+* `line_stats(S, mindiagline, minvertline)` — single-pass diagonal and vertical line scan on a sparse recurrence matrix. Used internally by `crqa()`; exposed for users who want the same statistics from a pre-computed RP.
+* `aRQA(ts1, ts2, delay, embed, radius, mindiagline, normalize)` — Stage 3a: approximative RQA following Schultz, Spiegel, Marwan & Albayrak (2015, Phys. Lett. A 379:997-1011) and Spiegel, Schultz & Marwan (2016). Computes RR, DET and L via phase-space histogram binning without forming the recurrence matrix. Scaling: ~O(N) at the time series sizes used here — measured 6 s at N=200,000 vs. exact `crqa()` OOMing at N=12,000.
+* `rosslerattractor(numsteps, dt, a, b, c)` — companion to `lorenzattractor()`. Used by the package's benchmark/validation scripts and by users wanting a second canonical chaotic test system.
+
+## New method
+
+* `method = "aRQA"` in `crqa()` dispatches to the approximative path. Parameters honoured: `delay`, `embed`, `radius`, `mindiagline`, `normalize`. Parameters silently ignored on this path (because the algorithm never materialises the recurrence matrix): `tw`, `side`, `whiteline`, `minvertline`, `metric`, `recpt`, `rescale`. Returns the standard `crqa()` output structure with `RR`, `DET`, `L` populated; `NRLINE`, `maxL`, `ENTR`, `rENTR`, `LAM`, `TT`, `max_vertlength`, `catH`, `RP` are set to `NA` (full line-length distribution is not available from the histogram alone). Approximation error vs. exact computation: ~2 pp on DET for stochastic data, ~10 pp for weakly deterministic, larger for strongly deterministic systems with most recurrences on long diagonals.
+
+## Validation
+
+A 182-case test sweep verifies that `DET`, `NRLINE`, `maxL`, `L`, `ENTR`, `rENTR`, `LAM`, `TT`, and `max_vertlength` are bit-for-bit identical between v2.0.7 and v2.1.0 across all combinations of `radius`, `embed`, `delay`, `tw`, `side`, `rescale`, square/rectangular matrices, and the `rqa`/`crqa` methods. `RR` matches exactly for the 21 cases with `tw = 0` and `side = "both"`, and changes by the predicted factor `(v1l * v2l) / region` in the other 161 cases.
+
+## Planned in the next release(s)
+
+* Approximative RQA (`method = "aRQA"`) following Schultz et al. 2015 (Phys. Lett. A 379) and Spiegel et al. 2016, targeting `N >= 1e6`.
+* Border-effect corrections (`dibo`, `kelo`, `censi`, window masking) for the diagonal-line entropy bias documented by Kraemer & Marwan 2019 (Phys. Lett. A 383).
+* Lacunarity (Braun et al. 2021, Nonlinear Dynamics) as a new RQA quantifier.
+* Quantile-based recurrence-threshold helpers in `optimizeParam()`.
+* Vectorised parameter sweeps (inspired by the API of AccRQA) for grid exploration of `(tau, embed, threshold)`.
+* Edit-distance recurrence for event-like / language data (Suzuki, Hirata & Aihara 2010, *Int. J. Bifurcat. Chaos* 20; Hirata & Aihara 2015, *Chaos* 25). Relevant for the linguistic-data community using `crqa`.
+
 # crqa 2.0.6
 
 * Rewritten jspd.f from 77 to Fortran compiler 90/95 (jspd.f90)

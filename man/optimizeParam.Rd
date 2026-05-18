@@ -13,18 +13,24 @@ for continuous time-series data}
   
 }
 \usage{
-optimizeParam(ts1, ts2, par, min.rec, max.rec)
+optimizeParam(ts1, ts2, par, min.rec = 2, max.rec = 5,
+              rr_denom = c("valid", "full"))
 }
 
 \arguments{
   \item{ts1}{First time-series}
   \item{ts2}{Second time-series}
-  \item{par}{A list of parameters needed for the optimization, 
+  \item{par}{A list of parameters needed for the optimization,
   refer to the Details section.}
   \item{min.rec}{The minimum value of recurrence accepted.
     Default = 2}
   \item{max.rec}{The maximum value of recurrence accepted.
     Default = 5}
+  \item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
+    recurrence-rate denominator used inside the radius search.
+    New in v2.1.0; see \code{\link{crqa}} for details. The
+    target \code{[min.rec, max.rec]} interval should be
+    specified in the convention selected here.}
 }
 
 \details{

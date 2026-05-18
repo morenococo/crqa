@@ -9,9 +9,12 @@ smaller recurrence plots. It can ease speed and memory issues
 if an appropriate size for the block is found.}
   
 \usage{
-piecewiseRQA(ts1, ts2, blockSize, delay, embed, rescale, radius,
-normalize, mindiagline, minvertline, tw, whiteline, recpt, side, 
-method, metric, datatype, typeRQA, windowsize)
+piecewiseRQA(ts1, ts2, blockSize, delay = 1, embed = 1, rescale = 0,
+radius = 0.001, normalize = 0, mindiagline = 2, minvertline = 2,
+tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
+method = "crqa", metric = "euclidean", datatype = "continuous",
+typeRQA = "full", windowsize = NA,
+workers = 1L, rr_denom = c("valid", "full"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,6 +65,11 @@ whether piecewise recurrence quantification measures
 should be returned for full plot or for the diagonal profile}  
 \item{windowsize}{the size of the window around the
 diagonal of the recurrence (if typeRQA = diagonal)}
+\item{workers}{Integer; number of parallel workers (default 1 =
+  serial). New in v2.1.0.}
+\item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
+  recurrence-rate denominator. New in v2.1.0; see
+  \code{\link{crqa}} for details.}
 
 }
 
