@@ -13,9 +13,13 @@
 
 \usage{
 
-wincrqa(ts1, ts2, windowstep, windowsize, delay, embed, 
-radius, rescale, normalize, mindiagline, minvertline, tw, whiteline, 
-recpt, side, method, metric, datatype, trend)
+wincrqa(ts1, ts2, windowstep, windowsize, delay, embed,
+radius = 0.001, rescale = 0, normalize = 0,
+mindiagline = 2, minvertline = 2,
+tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
+method = "crqa", metric = "euclidean", datatype = "continuous",
+trend = FALSE, workers = 1L,
+rr_denom = c("valid", "full"))
 
 }
 
@@ -65,9 +69,22 @@ recpt, side, method, metric, datatype, trend)
   see help rdist() to list all other possible metrics.} 
 \item{datatype}{a string (continuous or categorical) 
   to indicate whether the nature of the data type}
-\item{trend}{a boolean (TRUE or FALSE) 
+\item{trend}{a boolean (TRUE or FALSE)
   to indicate whether the TREND should be computed of the
   system}
+\item{workers}{Integer; number of parallel workers (default 1 =
+  serial). Set greater than 1 to dispatch the per-window
+  \code{crqa()} calls via \pkg{future} + \pkg{furrr}. Note: spawning
+  workers has a fixed startup cost of a few seconds; parallel
+  execution only pays off when individual windows are themselves
+  expensive (large \code{N} per window or many windows). For typical
+  exploratory use (short series, modest number of windows) the
+  serial default is faster. New in v2.1.0.}
+\item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
+  recurrence-rate denominator. \code{"valid"} (default) excludes
+  Theiler/side-blanked cells from the denominator; \code{"full"}
+  reproduces the historical convention. New in v2.1.0; see the
+  \code{\link{crqa}} documentation for details.}
 
 }
 
