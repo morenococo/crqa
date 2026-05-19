@@ -35,9 +35,11 @@ and linguistic time series. It provides:
 
 ### Performance in context (v2.1.0)
 
-Version 2.1.0 replaces the legacy `spdiags`-based pipeline with a fused
-Rcpp inner loop that never materialises the N×N distance matrix, and
-adds OpenMP parallelism on top. Figure 1 plots wall time vs. N on the
+Version 2.1.0 replaces the legacy `spdiags`-based pipeline with a
+**fused** Rcpp inner loop — meaning distance computation, threshold
+comparison, and line-statistic collection are merged into a single pass
+that never materialises the N×N distance matrix — and adds OpenMP
+parallelism on top. Figure 1 plots wall time vs. N on the
 Rössler-system benchmark of Marwan & Kraemer (2023, *EPJST* 232:5–27)
 — the standard reference for RQA package comparisons (m = 3, τ = 6,
 Euclidean norm, dense ~2 % recurrence, 30 s cutoff per call).
