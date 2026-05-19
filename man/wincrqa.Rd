@@ -86,11 +86,12 @@ rr_denom = c("valid", "full"))
   default uses all available cores. Combining \code{workers > 1}
   with the default OpenMP setting can over-subscribe the CPU
   (e.g. \code{workers = 4} on a 4-core machine would spawn up to
-  16 threads). When using \code{workers > 1} set
-  \code{Sys.setenv(OMP_NUM_THREADS = "1")} in the parent session
-  before calling \code{wincrqa()}, so each worker uses a single
-  OpenMP thread and the parallelism comes entirely from
-  \code{workers}.}
+  16 threads). When using \code{workers > 1}, set
+  \code{OMP_NUM_THREADS=1} in the shell environment BEFORE
+  launching R, so each worker uses a single OpenMP thread and
+  the parallelism comes entirely from \code{workers}.
+  \code{Sys.setenv()} from inside R is too late: libgomp caches
+  the thread count at first parallel region.}
 \item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
   recurrence-rate denominator. \code{"valid"} (default) excludes
   Theiler/side-blanked cells from the denominator; \code{"full"}
