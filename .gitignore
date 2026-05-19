@@ -3,3 +3,8 @@
 .RData
 .Ruserdata
 inst/doc
+*.tar.gz
+*.Rcheck/
+*.tmp.*
+CLAUDE.md
+.claude/
