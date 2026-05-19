@@ -42,7 +42,7 @@
 }
  
  
-\author{John C. Nash (nashjc@uottawa.ca)}
+\author{Moreno I. Coco (moreno.cocoi@gmail.com)}
 
 
 \examples{
