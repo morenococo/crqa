@@ -141,14 +141,15 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
       to the serial reference at any thread count -- only
       floating-point comparisons happen in the parallel region,
       no reductions. crqa respects the standard
-      \code{OMP_NUM_THREADS} environment variable; set it to
-      \code{1} before the first \code{crqa()} call to force
-      serial execution, or to any positive integer to cap
-      parallelism. When OpenMP is unavailable (some macOS
-      source builds with Apple clang lacking libomp) the kernel
-      transparently falls back to single-threaded execution.
-      Typical speedup at N >= 10000 with sparse recurrence:
-      ~2x on 4 cores, ~3-4x on 8 cores.
+      \code{OMP_NUM_THREADS} environment variable, which must
+      be set in the shell BEFORE launching R (libgomp caches
+      its thread count at first parallel region, so
+      \code{Sys.setenv()} from inside R is too late). When
+      OpenMP is unavailable (some macOS source builds with
+      Apple clang lacking libomp) the kernel transparently
+      falls back to single-threaded execution. Typical speedup
+      at N >= 10000 with sparse recurrence: ~2x on 4 cores,
+      ~3-4x on 8 cores.
   }
 
   The new

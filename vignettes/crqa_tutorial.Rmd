@@ -36,33 +36,49 @@ and linguistic time series. It provides:
 ### Performance in context (v2.1.0)
 
 Version 2.1.0 replaces the legacy `spdiags`-based pipeline with a fused
-Rcpp inner loop that never materialises the N×N distance matrix. Figure 1
-shows wall time (left panel) and peak memory (right panel) measured on
-the Rössler-system benchmark of Marwan & Kraemer (2023, *EPJST* 232:5–27)
+Rcpp inner loop that never materialises the N×N distance matrix, and
+adds OpenMP parallelism on top. Figure 1 plots wall time vs. N on the
+Rössler-system benchmark of Marwan & Kraemer (2023, *EPJST* 232:5–27)
 — the standard reference for RQA package comparisons (m = 3, τ = 6,
-Euclidean norm, 30 s cutoff per call). Solid lines are measured on this
-hardware; reference levels for other packages are from the paper or
-derived from each implementation's algorithmic memory requirements.
+Euclidean norm, dense ~2 % recurrence, 30 s cutoff per call).
 
-```{r benchmark-fig, echo = FALSE, out.width = "100%", fig.cap = "Figure 1. Speed (left) and peak memory (right) for crqa v2.1.0 vs. other RQA implementations on the Rössler-system benchmark (Marwan & Kraemer 2023). Solid lines: measured. Dashed lines: reference levels from the paper or derived from algorithm characteristics. crqa v2.0.7 (legacy) hits the 30 s wall and OOMs at N ≈ 12 k. crqa v2.1.0 (fused) is 5–15x faster than v2.0.7 and comparable to pyunicorn on CPU. crqa v2.1.0 (aRQA) — available as method='aRQA' in this package — extends to N = 200 000 in ~6 s with O(N) memory."}
+```{r benchmark-fig, echo = FALSE, out.width = "100%", fig.cap = "Figure 1. Wall time per call for crqa v2.1.0 vs. other RQA implementations on the Rössler-system benchmark (Marwan & Kraemer 2023). Filled markers: measured on this hardware (4-core Ryzen-class CPU). Open markers: reference levels from Marwan & Kraemer 2023 Fig 3A. AccRQA 1.0.1 measured single-threaded — their library also offers OpenMP and CUDA paths not benchmarked here. The crqa serial line uses OMP_NUM_THREADS=1; the OpenMP line uses all 4 cores. The aRQA path is a fundamentally different algorithm (phase-space histogram) with O(N) memory and scales to N = 200 000 in seconds."}
 knitr::include_graphics("figure3_speed_memory.png")
 ```
 
-`crqa v2.1.0 (fused)` is 5–15× faster than v2.0.7 and comparable to
-pyunicorn (Cython, Python) on CPU. The approximative path
-(`method = "aRQA"`) — **part of this package** — scales to N = 200 000
-in ~6 s, a regime where all exact O(N²) methods run out of memory.
-Unlike specialised GPU libraries (AccRQA, PyRQA), `crqa` also provides
-cross-recurrence, multidimensional analysis, windowed methods, and
-parameter optimisation — features unavailable in those tools.
+The figure summarises crqa's competitive position:
 
-The fused kernel is also **OpenMP-parallel** (new in v2.1.0). On
-multi-core systems it scales near-linearly with cores at typical
-sparsity (RR ≲ 1 %) and gives ~2× speedup on 4 cores beyond the figures
-above. crqa respects `OMP_NUM_THREADS` — set it to `1` to force serial
-execution, or to `N` to cap parallelism. When using a wrapper's
-`workers` argument, set `OMP_NUM_THREADS = 1` in each worker to avoid
-CPU over-subscription.
+- **`crqa v2.0.7 (legacy)`** hits the 30 s wall and OOMs at N ≈ 12 k.
+- **`crqa v2.1.0 (fused, serial)`** is 5–15× faster than v2.0.7 and
+  comparable to pyunicorn (Cython, Python) on CPU.
+- **`crqa v2.1.0 (fused, OpenMP)`** further accelerates the kernel by
+  parallelising the distance-and-threshold loop. At moderate N the gain
+  is ~1.3–1.9× on 4 cores. The dense-RR regime shown here is the worst
+  case for OpenMP scaling (the post-loop diagonal-line sort is
+  sequential and dominates at high N); typical sparser analyses
+  (RR ≲ 0.5 %) approach near-linear scaling with cores.
+- **`crqa v2.1.0 (method = "aRQA")`** is part of this package and
+  scales to N = 200 000 in seconds with O(N) memory — a regime where
+  all exact O(N²) methods run out of memory.
+- **AccRQA 1.0.1 (CPU)** is faster than crqa fused on this auto-RQA
+  benchmark by ~3–6× single-threaded; with its OpenMP and CUDA paths
+  it widens further. AccRQA does not implement cross-recurrence
+  (CRQA), multidimensional (mdcrqa), windowed analysis, categorical
+  data, Theiler windows, optimisation, or visualisation — those are
+  exclusive to crqa.
+
+The two libraries are complementary: AccRQA is a GPU-aware kernel
+library for vanilla auto-RQA on long single time series; crqa is the
+R-native analytical toolbox for the broader range of recurrence
+analyses used in behavioural, cognitive and linguistic research.
+
+By default crqa uses **all available cores via OpenMP**. To force
+serial execution set `OMP_NUM_THREADS=1` in the shell *before*
+launching R (setting it via `Sys.setenv()` from inside R is too late —
+libgomp caches the thread count at first use). To cap parallelism,
+set `OMP_NUM_THREADS=N` similarly. When using a wrapper's `workers`
+argument, set `OMP_NUM_THREADS=1` in the parent session to avoid CPU
+over-subscription.
 
 ---
 
@@ -268,7 +284,11 @@ when individual windows take > 0.5 s each.
 # Cap each crqa() call to one OpenMP thread so the per-window cost
 # stays predictable; the parallelism comes from `workers`, not from
 # OpenMP. This avoids the M-workers x T-OpenMP-threads oversubscription.
-Sys.setenv(OMP_NUM_THREADS = "1")
+# IMPORTANT: set OMP_NUM_THREADS in the shell BEFORE launching R —
+# Sys.setenv() from inside R is too late because libgomp caches the
+# thread count at first parallel region.
+#
+#   $ OMP_NUM_THREADS=1 R   # then run this:
 win_par <- wincrqa(narrator, listener,
                    windowstep = 20, windowsize = 80,
                    delay = 1, embed = 1, radius = 0.001,

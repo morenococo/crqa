@@ -47,13 +47,13 @@ backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
 
 * **Thread-count control.** crqa respects the standard `OMP_NUM_THREADS`
   environment variable. By default the OpenMP runtime uses all
-  available cores. To limit parallelism, set
-  `Sys.setenv(OMP_NUM_THREADS = "1")` (or any positive integer) *before*
-  the first `crqa()` call. When combining the wrapper `workers`
-  argument with OpenMP, set `OMP_NUM_THREADS = 1` inside the workers
-  (or in the parent session) to avoid CPU over-subscription —
-  `wincrqa(workers = 4)` on a 4-core machine with default OpenMP would
-  otherwise spawn up to 16 threads.
+  available cores. To override, set `OMP_NUM_THREADS=N` in the shell
+  *before* launching R — `Sys.setenv()` from inside R is too late
+  because libgomp caches its thread count at first parallel region.
+  When combining the wrapper `workers` argument with OpenMP, set
+  `OMP_NUM_THREADS=1` in the parent session to avoid CPU
+  over-subscription — `wincrqa(workers = 4)` on a 4-core machine with
+  default OpenMP would otherwise spawn up to 16 threads.
 
 ## Performance (Stage 3b additions, 2026-05-14)
 
