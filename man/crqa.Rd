@@ -113,7 +113,7 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
 }
 
 \details{
-  Version 2.1.0 modernised \code{crqa()} along three axes,
+  Version 2.1.0 modernised \code{crqa()} along four axes,
   preserving exact numerical identity with the previous CRAN
   release (v2.0.7) on every shared measure:
 
@@ -135,6 +135,20 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
       recurrence matrix. Memory is O(N + nnz) instead of
       O(N^2); runtime is 5-15x faster than the legacy path at
       N >= 2000.
+    \item OpenMP parallelism (since v2.1.0 Stage 3c). The
+      fused kernel's distance-and-threshold loop is parallelised
+      across post-transpose columns. Results are bit-identical
+      to the serial reference at any thread count -- only
+      floating-point comparisons happen in the parallel region,
+      no reductions. crqa respects the standard
+      \code{OMP_NUM_THREADS} environment variable; set it to
+      \code{1} before the first \code{crqa()} call to force
+      serial execution, or to any positive integer to cap
+      parallelism. When OpenMP is unavailable (some macOS
+      source builds with Apple clang lacking libomp) the kernel
+      transparently falls back to single-threaded execution.
+      Typical speedup at N >= 10000 with sparse recurrence:
+      ~2x on 4 cores, ~3-4x on 8 cores.
   }
 
   The new

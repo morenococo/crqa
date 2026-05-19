@@ -79,7 +79,18 @@ rr_denom = c("valid", "full"))
   execution only pays off when individual windows are themselves
   expensive (large \code{N} per window or many windows). For typical
   exploratory use (short series, modest number of windows) the
-  serial default is faster. New in v2.1.0.}
+  serial default is faster. New in v2.1.0.
+
+  \strong{Interaction with OpenMP.} Since v2.1.0 the fused C++
+  kernel inside \code{crqa()} is itself OpenMP-parallel and by
+  default uses all available cores. Combining \code{workers > 1}
+  with the default OpenMP setting can over-subscribe the CPU
+  (e.g. \code{workers = 4} on a 4-core machine would spawn up to
+  16 threads). When using \code{workers > 1} set
+  \code{Sys.setenv(OMP_NUM_THREADS = "1")} in the parent session
+  before calling \code{wincrqa()}, so each worker uses a single
+  OpenMP thread and the parallelism comes entirely from
+  \code{workers}.}
 \item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
   recurrence-rate denominator. \code{"valid"} (default) excludes
   Theiler/side-blanked cells from the denominator; \code{"full"}

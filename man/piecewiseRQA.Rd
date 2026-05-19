@@ -66,7 +66,8 @@ should be returned for full plot or for the diagonal profile}
 \item{windowsize}{the size of the window around the
 diagonal of the recurrence (if typeRQA = diagonal)}
 \item{workers}{Integer; number of parallel workers (default 1 =
-  serial). New in v2.1.0.}
+  serial). New in v2.1.0; see \code{\link{wincrqa}} for the
+  parallel-execution caveats (including the OpenMP interaction).}
 \item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
   recurrence-rate denominator. New in v2.1.0; see
   \code{\link{crqa}} for details.}
