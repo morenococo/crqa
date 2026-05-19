@@ -8,3 +8,5 @@ inst/doc
 *.tmp.*
 CLAUDE.md
 .claude/
+src/*.o
+src/*.so
