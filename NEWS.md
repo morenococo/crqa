@@ -6,6 +6,26 @@ A major performance and modernisation update. All numerical outputs are
 backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
 (see "Behavioural changes" below).
 
+## Behavioural fix: global normalisation in windowed functions (2026-05-19)
+
+* **`wincrqa()`, `windowdrp()`, and `piecewiseRQA()`** now apply
+  `normalize` to the **full** input series once, before any windowing
+  or block decomposition. In previous versions `normalize` was applied
+  independently inside each `crqa()` call, meaning every window had its
+  own unit-interval or z-score reference — making windows
+  non-comparable and causing the effective threshold to shift across
+  windows (GitHub issue #19, reported by cmicek1).
+
+  `rescale` is intentionally unchanged: it rescales the **distance
+  matrix**, whose statistics (mean, max, min) are inherently local to
+  each window. Pre-computing a global rescale factor would require
+  materialising the full N×N distance matrix; users who need global
+  rescaling should pre-compute the factor externally and set
+  `rescale = 0`.
+
+  This is a **behaviour change** when `normalize > 0`. Results for
+  `normalize = 0` (the default) are identical to previous versions.
+
 ## Performance (Stage 3c additions, 2026-05-18)
 
 * **OpenMP parallelism in the fused C++ kernel** (`src/crqa_fused.cpp`).

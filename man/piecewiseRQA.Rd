@@ -35,7 +35,10 @@ workers = 1L, rr_denom = c("valid", "full"))
   \item{normalize}{Normalize the time-series;
     if normalize = 0 (do nothing);
     if normalize = 1 (Unit interval);
-    if normalize =  2 (z-score).}
+    if normalize =  2 (z-score).
+    Since v2.1.0, normalization is applied once to the \emph{full} series
+    before block decomposition, so all blocks share the same scale and
+    the assembled recurrence plot is internally consistent.}
   \item{mindiagline}{A minimum diagonal length of
     recurrent points. Usually set to 2, as it takes
     a minimum of two points to define any line.}

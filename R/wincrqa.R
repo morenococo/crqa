@@ -137,6 +137,23 @@ wincrqa <- function(ts1,
   }
 
 
+  ## Apply normalize globally over the full series so every window shares
+  ## the same scale. After this block normalize is set to 0 so the per-window
+  ## crqa() calls skip the step. (rescale is intentionally left per-window:
+  ## it depends on each window's distance matrix, so a global value cannot
+  ## be pre-computed without materialising the full N×N matrix.)
+  if (normalize > 0 && !recpt) {
+    switch(normalize,
+      { ## 1: unit interval — mirrors crqa() logic exactly
+        ts1 <- ts1 - min(ts1); ts1 <- ts1 / max(ts1)
+        ts2 <- ts2 - min(ts2); ts2 <- ts2 / max(ts2) },
+      { ## 2: z-score
+        ts1 <- scale(ts1)
+        ts2 <- scale(ts2) }
+    )
+    normalize <- 0L
+  }
+
   ## need to make sure to include also "irregular" final segments
   points = seq(1, (maxd - (windowsize)-1), windowstep)
 

@@ -63,6 +63,17 @@ piecewiseRQA <- function(ts1, ts2, blockSize, delay = 1, embed = 1, rescale = 0,
   if(exists("minvertline") & minvertline > 2) minvertline = minvertline else minvertline <- 2
   if(exists("typeRQA"))     typeRQA = typeRQA else typeRQA = "full"
 
+  ## Apply normalize globally over the full series before block decomposition
+  ## so that all blocks share the same scale and the assembled RP is consistent.
+  if (normalize > 0) {
+    switch(normalize,
+      { ts1 <- ts1 - min(ts1); ts1 <- ts1 / max(ts1)
+        ts2 <- ts2 - min(ts2); ts2 <- ts2 / max(ts2) },
+      { ts1 <- scale(ts1); ts2 <- scale(ts2) }
+    )
+    normalize <- 0L
+  }
+
   nrows = max(1:length(ts1) - delay*(embed-1))
   ncols = max(1:length(ts2) - delay*(embed-1))
 
