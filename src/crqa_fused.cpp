@@ -29,11 +29,15 @@
 //   numrecurs, diaglines, max_vertlength, TT, lam, wmean, wmax, wENTR, wlines
 
 // [[Rcpp::plugins(cpp17)]]
+// [[Rcpp::plugins(openmp)]]
 #include <Rcpp.h>
 #include <vector>
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 using namespace Rcpp;
 
 // -----------------------------------------------------------------------------
@@ -200,46 +204,107 @@ List crqa_fused_cpp(const NumericMatrix& ts1, const NumericMatrix& ts2,
   const double* p1 = REAL(ts1);
   const double* p2 = REAL(ts2);
 
-  // Collect recurrent cell coordinates in post-transpose (row, col) order,
-  // visited as col outer (1..v2l), row inner (1..v1l). This mirrors line_stats()
-  // ord2 = order(jj, ii) and ord = order(d_idx, ii) ordering when later sorted.
-  std::vector<int> ii_v;            // post-transpose row indices (1-based)
-  std::vector<int> jj_v;            // post-transpose col indices (1-based)
-  // Heuristic reserve based on RR ~ 5-30% typical.
-  ii_v.reserve((size_t)((long long)v1l * (long long)v2l / 20));
-  jj_v.reserve(ii_v.capacity());
+  // Validate metric_id ONCE up front so the parallel inner loop never has to
+  // call Rcpp::stop() (which is not thread-safe from worker threads).
+  if (metric_id < 1 || metric_id > 3) stop("unsupported metric_id");
 
-  long long numrecurs = 0;
-  std::vector<double> ai(dim), aj(dim);
+  // ---------------------------------------------------------------------------
+  // PARALLEL COLLECTION (OpenMP). Strategy:
+  //   - Each thread processes a contiguous range of post-transpose columns C
+  //     (static schedule, no chunk size -> default block partitioning).
+  //   - Each thread writes (ii, jj) recurrent indices into thread-local vectors.
+  //   - After the parallel section we concatenate thread vectors IN THREAD ORDER.
+  //     Because (a) static scheduling assigns thread t a contiguous column block
+  //     [t*v2l/T, (t+1)*v2l/T), and (b) each thread iterates rows in order
+  //     within each of its columns, the concatenated result is bit-for-bit
+  //     identical to the serial (jj outer, ii inner) ordering.
+  //
+  // The downstream line-statistics passes (diagonal sort+scan, vertical scan,
+  // white-line scan) operate on the merged (ii_v, jj_v) and are unchanged, so
+  // all measures (RR, DET, L, ENTR, rENTR, NRLINE, maxL, LAM, TT,
+  // max_vertlength, wmean, wmax, wENTR, RP) are bit-identical to the serial
+  // reference. Only floating-point comparisons (d <= radius) occur in the
+  // parallel region -- there is no FP reduction, so the threshold decisions
+  // are independent of thread count.
+  // ---------------------------------------------------------------------------
 
-  for (int C = 1; C <= v2l; ++C) {            // post-transpose column (= ts1 row C-1)
-    int c_idx = C - 1;
-    for (int k = 0; k < dim; ++k) ai[k] = p1[c_idx + (long long)k * n1];
-    for (int R = 1; R <= v1l; ++R) {          // post-transpose row (= ts2 row R-1)
-      // Apply masks in post-transpose coordinates. Matches theiler() in
-      // crqa_helpers.R: tw=0 leaves S untouched; tw>=1 blanks |R-C| <= tw-1.
-      int absd = std::abs(R - C);
-      if (tw > 0 && absd < tw) continue;
-      if (side == 1 && !(R < C)) continue;     // "upper": keep row < col
-      if (side == 2 && !(R > C)) continue;     // "lower": keep row > col
+  int nthreads = 1;
+#ifdef _OPENMP
+  nthreads = omp_get_max_threads();
+  if (nthreads < 1) nthreads = 1;
+#endif
 
-      int r_idx = R - 1;
-      for (int k = 0; k < dim; ++k) aj[k] = p2[r_idx + (long long)k * n2];
-      double d;
-      switch (metric_id) {
-        case 1:  d = dist_euclid(ai.data(), aj.data(), dim); break;
-        case 2:  d = dist_max   (ai.data(), aj.data(), dim); break;
-        case 3:  d = dist_manh  (ai.data(), aj.data(), dim); break;
-        default: stop("unsupported metric_id");
-      }
-      if (d <= radius) {
-        ii_v.push_back(R);
-        jj_v.push_back(C);
-        ++numrecurs;
+  std::vector<std::vector<int>> ii_chunks(nthreads);
+  std::vector<std::vector<int>> jj_chunks(nthreads);
+  // Per-thread reservation: split the global heuristic across threads.
+  const size_t per_thread_reserve =
+    (size_t)((long long)v1l * (long long)v2l / 20 / (long long)nthreads);
+  for (int t = 0; t < nthreads; ++t) {
+    ii_chunks[t].reserve(per_thread_reserve);
+    jj_chunks[t].reserve(per_thread_reserve);
+  }
+
+#ifdef _OPENMP
+  #pragma omp parallel num_threads(nthreads)
+#endif
+  {
+    int tid = 0;
+#ifdef _OPENMP
+    tid = omp_get_thread_num();
+#endif
+    std::vector<int>& ii_local = ii_chunks[tid];
+    std::vector<int>& jj_local = jj_chunks[tid];
+    std::vector<double> ai(dim), aj(dim);   // thread-private buffers
+
+#ifdef _OPENMP
+    #pragma omp for schedule(static) nowait
+#endif
+    for (int C = 1; C <= v2l; ++C) {            // post-transpose column
+      int c_idx = C - 1;
+      for (int k = 0; k < dim; ++k) ai[k] = p1[c_idx + (long long)k * n1];
+      for (int R = 1; R <= v1l; ++R) {          // post-transpose row
+        // Apply masks in post-transpose coordinates. Matches theiler() in
+        // crqa_helpers.R: tw=0 leaves S untouched; tw>=1 blanks |R-C| <= tw-1.
+        int absd = std::abs(R - C);
+        if (tw > 0 && absd < tw) continue;
+        if (side == 1 && !(R < C)) continue;     // "upper": keep row < col
+        if (side == 2 && !(R > C)) continue;     // "lower": keep row > col
+
+        int r_idx = R - 1;
+        for (int k = 0; k < dim; ++k) aj[k] = p2[r_idx + (long long)k * n2];
+        double d;
+        switch (metric_id) {
+          case 1:  d = dist_euclid(ai.data(), aj.data(), dim); break;
+          case 2:  d = dist_max   (ai.data(), aj.data(), dim); break;
+          default: d = dist_manh  (ai.data(), aj.data(), dim); break;
+        }
+        if (d <= radius) {
+          ii_local.push_back(R);
+          jj_local.push_back(C);
+        }
       }
     }
-    if ((C & 0xFF) == 0) Rcpp::checkUserInterrupt();
+  }  // end parallel region
+
+  // Concatenate per-thread chunks IN THREAD ORDER. Static scheduling guarantees
+  // thread t handled the lowest column block, thread t+1 the next, etc., so
+  // this concatenation reproduces the serial (jj outer, ii inner) layout.
+  size_t total_recurs = 0;
+  for (int t = 0; t < nthreads; ++t) total_recurs += ii_chunks[t].size();
+
+  std::vector<int> ii_v;
+  std::vector<int> jj_v;
+  ii_v.reserve(total_recurs);
+  jj_v.reserve(total_recurs);
+  for (int t = 0; t < nthreads; ++t) {
+    ii_v.insert(ii_v.end(), ii_chunks[t].begin(), ii_chunks[t].end());
+    jj_v.insert(jj_v.end(), jj_chunks[t].begin(), jj_chunks[t].end());
+    // Free thread-chunk memory eagerly so peak RAM doesn't double.
+    std::vector<int>().swap(ii_chunks[t]);
+    std::vector<int>().swap(jj_chunks[t]);
   }
+  long long numrecurs = (long long)total_recurs;
+  Rcpp::checkUserInterrupt();
 
   // Early return for empty RP, matching line_stats() exactly.
   if (numrecurs == 0) {

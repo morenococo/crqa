@@ -49,6 +49,7 @@ Imports:
     furrr,
     Rcpp (>= 1.0.0)
 LinkingTo: Rcpp
+SystemRequirements: GNU make
 License: GPL (>= 3)
 Collate:
     'RcppExports.R'
