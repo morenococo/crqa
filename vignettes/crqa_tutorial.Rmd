@@ -56,6 +56,14 @@ Unlike specialised GPU libraries (AccRQA, PyRQA), `crqa` also provides
 cross-recurrence, multidimensional analysis, windowed methods, and
 parameter optimisation — features unavailable in those tools.
 
+The fused kernel is also **OpenMP-parallel** (new in v2.1.0). On
+multi-core systems it scales near-linearly with cores at typical
+sparsity (RR ≲ 1 %) and gives ~2× speedup on 4 cores beyond the figures
+above. crqa respects `OMP_NUM_THREADS` — set it to `1` to force serial
+execution, or to `N` to cap parallelism. When using a wrapper's
+`workers` argument, set `OMP_NUM_THREADS = 1` in each worker to avoid
+CPU over-subscription.
+
 ---
 
 ## Installation
@@ -257,7 +265,10 @@ backend. Worker spawn overhead dominates for short jobs; use `workers > 1`
 when individual windows take > 0.5 s each.
 
 ```{r wincrqa-parallel, eval = FALSE}
-# Example with parallel workers
+# Cap each crqa() call to one OpenMP thread so the per-window cost
+# stays predictable; the parallelism comes from `workers`, not from
+# OpenMP. This avoids the M-workers x T-OpenMP-threads oversubscription.
+Sys.setenv(OMP_NUM_THREADS = "1")
 win_par <- wincrqa(narrator, listener,
                    windowstep = 20, windowsize = 80,
                    delay = 1, embed = 1, radius = 0.001,

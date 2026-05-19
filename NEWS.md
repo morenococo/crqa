@@ -6,6 +6,55 @@ A major performance and modernisation update. All numerical outputs are
 backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
 (see "Behavioural changes" below).
 
+## Performance (Stage 3c additions, 2026-05-18)
+
+* **OpenMP parallelism in the fused C++ kernel** (`src/crqa_fused.cpp`).
+  The O(N·M) distance-and-threshold loop now runs in parallel across
+  post-transpose columns using `#pragma omp parallel for` with static
+  scheduling. Thread-local `(ii, jj)` vectors are concatenated in thread
+  order after the parallel region, which preserves the column-major
+  layout downstream code expects. Results are **bit-for-bit identical**
+  to the serial reference at any thread count: the parallel region only
+  performs floating-point comparisons (`d ≤ radius`), never reductions,
+  so threshold decisions do not depend on thread count. Verified across
+  an 18-case validation battery (all rescale modes, both metric
+  families, Theiler windows, side masks, mdcrqa, both `rr_denom`
+  conventions). The companion `crqa_rescale_stat()` is deliberately
+  kept serial: it does compute an FP sum, and keeping it serial
+  guarantees the rescale factor (and hence the effective radius) is
+  identical to the v2.0.7 reference.
+
+  Measured wall-time speedup at N = 20 000 (4 physical cores, Ryzen
+  5800H, Linux):
+
+  | RR regime | Serial | 4 threads | Speedup |
+  |---|---|---|---|
+  | Sparse (~0.3 %, typical) | 3.22 s | 1.67 s | 1.93× |
+  | Dense  (~2.5 %)         | 8.31 s | 6.75 s | 1.23× |
+
+  Sparse cases (the typical CRQA regime) scale near-linearly with
+  cores. The dense case is bottlenecked by the sequential
+  diagonal-line sort (O(nnz log nnz)) — a future optimisation target.
+  Expect ~3–4× on 8-core systems and N ≥ 20 000.
+
+* **Build infrastructure.** New `src/Makevars` and `src/Makevars.win`
+  invoke `$(SHLIB_OPENMP_CXXFLAGS)` — R's portable OpenMP macro.
+  `DESCRIPTION` adds `SystemRequirements: GNU make`. Wrapped in
+  `#ifdef _OPENMP` guards, the kernel falls back to single-threaded
+  execution wherever OpenMP is unavailable (e.g. some macOS source
+  builds with Apple clang lacking libomp). No platform requires
+  OpenMP to build, install, or run the package.
+
+* **Thread-count control.** crqa respects the standard `OMP_NUM_THREADS`
+  environment variable. By default the OpenMP runtime uses all
+  available cores. To limit parallelism, set
+  `Sys.setenv(OMP_NUM_THREADS = "1")` (or any positive integer) *before*
+  the first `crqa()` call. When combining the wrapper `workers`
+  argument with OpenMP, set `OMP_NUM_THREADS = 1` inside the workers
+  (or in the parent session) to avoid CPU over-subscription —
+  `wincrqa(workers = 4)` on a 4-core machine with default OpenMP would
+  otherwise spawn up to 16 threads.
+
 ## Performance (Stage 3b additions, 2026-05-14)
 
 * **Fortran backend retired.** `src/jspd.f90` and `src/init.c` deleted;
@@ -36,9 +85,6 @@ backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
   now folded into `radius` before entering the fused kernel (`dm / s <=
   r` ⟺ `dm <= r * s`), so no second N×N copy of `dm` is allocated.
   Halves peak RAM at `rescale > 0` vs the Stage 2 path.
-
-* **`crqa_memory_estimate(N, ...)`** — new helper that predicts peak
-  RAM for the fused and legacy paths and recommends a method.
 
 ## Performance
 

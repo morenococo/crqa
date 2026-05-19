@@ -12,8 +12,10 @@
   (RQA/CRQA/MdCRQA). The package computes in-depth measures of recurrence
   plots for continuous and categorical time series, supports diagonal
   profile analysis, windowed analysis, and parameter optimisation.
-  Since v2.1.0 it also exposes an approximative path
-  (\code{method = "aRQA"}) that scales to very long series (N >> 10^5)
+  Since v2.1.0 the core kernel is implemented as a fused Rcpp inner
+  loop with OpenMP parallelism (transparently falling back to serial
+  on platforms without OpenMP support), and an approximative path
+  (\code{method = "aRQA"}) scales to very long series (N >> 10^5)
   with negligible memory footprint.
   See Coco and Dale (2014) <doi:10.3389/fpsyg.2014.00510>,
   Wallot (2018) <doi:10.1080/00273171.2018.1512846>, and
