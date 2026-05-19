@@ -74,21 +74,28 @@ diagonal of the recurrence (if typeRQA = diagonal)}
 }
 
 \details{
-  It is important to estimate the size of the block that 
-  may maximize the speed of the computation. 
-  We suggest to monitor how speed and memory usage
-  changes as a result of increasing the time-series and
-  the block size. 
-  We also recommend setting whiteline = FALSE, as the current
-  version of the library does not make use of such
-  information to extract measures of recurrence.
+  \code{piecewiseRQA} is a structural tool: it divides the time series
+  into consecutive non-overlapping blocks and computes a separate
+  recurrence plot for each block, then aggregates the measures. The
+  primary use case is decomposing a long recording into epochs and
+  examining how recurrence structure changes across them.
+
+  Note: since v2.1.0 the core \code{crqa()} function uses a fused C++
+  inner loop that never materialises the full N x N distance matrix
+  (memory is O(N + nnz)), so \code{piecewiseRQA} is no longer needed
+  as a memory or speed workaround. For analysing a single long series
+  consider \code{crqa()} directly (exact measures) or
+  \code{crqa(\ldots, method = "aRQA")} (O(N) memory approximation).
+
+  Set \code{workers > 1} to process blocks in parallel via the
+  \pkg{future} + \pkg{furrr} backends.
 }
 
 \value{
   If an RP can be calculated and recurrence is found, 
-  the piecewiseRQA will return exactly the same measures 
-  as crqa() if the typeRQA is set to 'full' and 
-  drpdfromts() if the typeRQA is set to 'diagonal'.
+  the piecewiseRQA will return exactly the same measures
+  as crqa() if the typeRQA is set to 'full' and
+  drpfromts() if the typeRQA is set to 'diagonal'.
   Please refer to the help file for those two functions 
   for details about the measures.
   \item{RP}{The Recurrence Plot sparse matrix data}
@@ -102,30 +109,26 @@ on Matlab code by Sebastian Wallot}
 
 \examples{
 
-## Uncomment and run locally
+data(crqa)
 
-## generate some data using pracma
+listener = eyemovement$listener
+narrator = eyemovement$narrator
 
-# ts1 = seq(0.1, 200, .1)
-# ts1 = sin(ts1) + linspace(0, 1,length(ts1));
+blockSize = 200; delay = 1; embed = 1; rescale = 0; radius = 0.001;
+normalize = 0; mindiagline = 2; minvertline = 2;
+tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
+method = "crqa"; metric = "euclidean"; datatype = "categorical"
+typeRQA = "full"; windowsize = NA
 
-# ts2 = ts1
+pieceRP = piecewiseRQA(narrator, listener, blockSize, delay, embed, rescale,
+                       radius, normalize, mindiagline, minvertline,
+                       tw, whiteline, recpt, side,
+                       method, metric, datatype, typeRQA,
+                       windowsize)
 
-## initialize the parameters
-# blockSize = 100; delay  = 15; embed  = 2; rescale = 0; radius = 0.5;
-# normalize = 0; mindiagline = 2; minvertline = 2;
-# tw = 1; whiteline = FALSE; recpt = FALSE; side = 'both'
-# method = "crqa"; metric = 'euclidean'; datatype = "continuous"
-# typeRQA = "full"; windowsize = NA
+## print recurrence measures across blocks (excluding the RP objects)
+print(pieceRP[!names(pieceRP) \%in\% "RP"])
 
-# pieceRP = piecewiseRQA(ts1, ts2, blockSize, delay, embed, rescale,
-#                       radius, normalize, mindiagline, minvertline,
-#                       tw, whiteline, recpt, side,
-#                       method, metric, datatype, typeRQA, 
-#                       windowsize)
-                       
-# print(unlist(pieceRP[1:10]))
-                       
 }
 
 \keyword{ts}

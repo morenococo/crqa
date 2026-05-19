@@ -125,18 +125,15 @@ Alexandra Paxton \email{alexandra.paxton@uconn.edu}}
 
 data(crqa) 
 
-listener = eyemovement$listener[1:200]
-narrator = eyemovement$narrator[1:200]
-
-# NB, the parameters for windowsize and windowstep are large to allow
-# faster running time, please set them carefully in your analysis. 
+listener = eyemovement$listener
+narrator = eyemovement$narrator
 
 delay = 1; embed = 1; rescale = 0; radius = 0.001;
 normalize = 0; mindiagline = 2; minvertline = 2;
 tw = 0; whiteline = FALSE; recpt = FALSE; side = "both"
-method = 'crqa'; metric = 'euclidean';  
-datatype = "continuous"; 
-windowsize =  100; windowstep = 50
+method = 'crqa'; metric = 'euclidean';
+datatype = "continuous";
+windowsize = 200; windowstep = 100
 trend = FALSE
 
 ans = wincrqa(listener, narrator, windowstep, windowsize, delay, embed,
