@@ -129,7 +129,7 @@ Dan Moenster, Aarhus University
 
 data(crqa) ## load the data
 
-handset = handmovement[1:300, ] ## take less points
+handset = handmovement[1:300, ]
 
 P1 = cbind(handset$P1_TT_d, handset$P1_TT_n) 
 P2 = cbind(handset$P2_TT_d, handset$P2_TT_n)
