@@ -46,6 +46,16 @@ windowdrp <- function(ts1, ts2, windowstep, windowsize, lagwidth,
     points = seq(1, (maxd - (windowsize)-1), windowstep)
   }
 
+  ## Apply normalize globally over the full series (see wincrqa for rationale).
+  if (normalize > 0) {
+    switch(normalize,
+      { ts1 <- ts1 - min(ts1); ts1 <- ts1 / max(ts1)
+        ts2 <- ts2 - min(ts2); ts2 <- ts2 / max(ts2) },
+      { ts1 <- scale(ts1); ts2 <- scale(ts2) }
+    )
+    normalize <- 0L
+  }
+
   ## need to make sure to include also "irregular" final segments
   fpoint = points[length(points)] ## beginning of last window
   ## as the dimension of the data often may not be that precise
