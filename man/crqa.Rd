@@ -21,7 +21,7 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
      radius = 0.001, normalize = 0, mindiagline = 2, minvertline = 2,
      tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
      method = "rqa", metric = "euclidean", datatype = "continuous",
-     rr_denom = c("valid", "full"))
+     rr_denom = "full")
 }
 \arguments{
   \item{ts1}{First time-series dataset.}
@@ -88,17 +88,10 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
     (new in v2.1.0). The literature does not settle on a single
     convention when a Theiler window or one-sided mask is in use:
     \describe{
-      \item{\code{"valid"} (default)}{Denominator counts only
-        cells that survived the Theiler band and the side mask.
-        \code{RR} reflects the fraction of \emph{analysable}
-        cell pairs that are recurrent. Internally consistent
-        with how \code{DET} and \code{ENTR} are already
-        computed (their denominator is \code{numrecurs}, the
-        post-Theiler count). The cell count is given by the new
-        \code{\link{theiler_exclusion}} helper, which works for
-        both square and rectangular RPs.}
-      \item{\code{"full"}}{Denominator is \code{v1l * v2l}
-        (all cells), regardless of how many were blanked.
+      \item{\code{"full"} (default)}{Denominator is \code{N1 * N2}
+        (all cells in the recurrence plot), regardless of how many
+        were blanked by the Theiler window or side mask.
+        Formula: \code{RR = 100 * numrecurs / (N1 * N2)}.
         Reproduces the historical convention of \code{crqa} <=
         2.0.7, of the original Marwan (2007, Phys. Rep. 438)
         \code{RR = (1/N^2) Sum R_ij} definition, and of the
@@ -106,10 +99,20 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
         comparisons with other RQA tools or with published
         analyses that calibrated \code{radius} against this
         convention.}
+      \item{\code{"valid"}}{Denominator counts only the cells that
+        survived the Theiler band and the side mask.
+        Formula: \code{RR = 100 * numrecurs / (N1 * N2 - theiler_exclusion(N1, N2, tw))}.
+        \code{RR} then reflects the fraction of \emph{analysable}
+        cell pairs that are recurrent, and is internally consistent
+        with how \code{DET} and \code{ENTR} are already computed
+        (their denominator is \code{numrecurs}, the post-Theiler
+        count). The excluded cell count is given by the new
+        \code{\link{theiler_exclusion}} helper, which works for
+        both square and rectangular RPs.}
     }
     For \code{tw == 0} and \code{side == "both"} both
     conventions give the same value, so this argument matters
-    only when one of those is set.}
+    only when one of those is non-default.}
 }
 
 \details{
@@ -152,10 +155,13 @@ crqa(ts1, ts2, delay = 1, embed = 1, rescale = 0,
       ~3-4x on 8 cores.
   }
 
-  The new
-  \code{rr_denom = "valid"} default differs from the v2.0.7
-  RR convention; pass \code{rr_denom = "full"} to recover
-  the legacy numbers.
+  The default \code{rr_denom = "full"} preserves the v2.0.7 RR
+  convention for backwards compatibility. Pass
+  \code{rr_denom = "valid"} for a denominator that excludes
+  Theiler-blanked cells, making RR internally consistent with
+  DET and ENTR. When \code{side != "both"} or \code{tw > 0},
+  the two options diverge; consider explicitly setting
+  \code{rr_denom} in those cases.
 
   Other metrics (\code{"canberra"}, \code{"minkowski"} etc.)
   still go through the legacy \code{cdist()}-based path. All

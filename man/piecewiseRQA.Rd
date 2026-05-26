@@ -14,7 +14,7 @@ radius = 0.001, normalize = 0, mindiagline = 2, minvertline = 2,
 tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
 method = "crqa", metric = "euclidean", datatype = "continuous",
 typeRQA = "full", windowsize = NA,
-workers = 1L, rr_denom = c("valid", "full"))
+workers = 1L, rr_denom = "full")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

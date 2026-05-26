@@ -23,7 +23,7 @@ tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
 method = "crqa", metric = "euclidean",
 datatype = "continuous",
 workers = 1L,
-rr_denom = c("valid", "full"))
+rr_denom = "full")
 
 }
 

@@ -23,8 +23,8 @@ windowdrp <- function(ts1, ts2, windowstep, windowsize, lagwidth,
                       method = 'crqa', metric = 'euclidean',
                       datatype = 'continuous',
                       workers = 1L,
-                      rr_denom = c("valid", "full")){
-  rr_denom <- match.arg(rr_denom)
+                      rr_denom = "full"){
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
 
   irregular = FALSE; # initialize a flag that will be used to check whether the last window is included
   ## check the different contexts in which the analyses are running

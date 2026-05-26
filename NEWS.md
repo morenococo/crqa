@@ -2,8 +2,9 @@
 
 # crqa 2.1.0 (2026-05-14, final)
 
-A major performance and modernisation update. All numerical outputs are
-backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
+A major performance and modernisation update. All numerical outputs
+are backward-compatible with v2.0.7 by default. The new `rr_denom`
+argument lets users opt into a Theiler-aware RR denominator
 (see "Behavioural changes" below).
 
 ## Behavioural fix: global normalisation in windowed functions (2026-05-19)
@@ -114,7 +115,7 @@ backward-compatible **except for `RR` when `tw > 0` or `side != "both"`**
 
 ## Behavioural changes
 
-* **`RR` denominator now excludes Theiler-blanked and side-blanked cells.** A new helper `theiler_exclusion(m, n, w)` computes the exact number of cells in the Theiler band of width `w` for an arbitrary `m x n` matrix (works for rectangular RPs). For `tw = 0` and `side = "both"`, `RR` is identical to v2.0.7; otherwise it is larger than before by a factor of `(v1l * v2l) / region`, because Theiler/side-blanked cells no longer inflate the denominator. Concept adapted from pjbruna's community PR, generalised to rectangular matrices, and with the silent `tw = 0 -> tw = 1` coercion removed.
+* **New `rr_denom` argument controls the RR denominator** (default `"full"` for backward compatibility with v2.0.7). Passing `rr_denom = "valid"` excludes Theiler-blanked and side-blanked cells from the denominator, making RR internally consistent with how DET and ENTR are computed. A new helper `theiler_exclusion(m, n, w)` computes the exact excluded-cell count for arbitrary `m x n` matrices (works for rectangular RPs). For `tw = 0` and `side = "both"`, the two conventions give identical results. Concept adapted from pjbruna's community PR (#28), generalised to rectangular matrices, and with the silent `tw = 0 -> tw = 1` coercion removed.
 
 * **The `whiteline` argument is now ignored inside `crqa()`.** In all prior versions, `tt()` was called with this argument but its white-line output was never returned in the results list. The behaviour is therefore unchanged for users; `whiteline` remains in the function signature for backward compatibility but no longer affects timings. Callers who need white-line statistics can still invoke `tt()` directly.
 

@@ -1,4 +1,6 @@
-# Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis with crqa.
+# crqa <img src="man/figures/logo.png" align="right" height="139" alt="crqa logo" />
+
+**Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis**
 
 The crqa R package allows users to conduct a wide range of recurrence-based analyses on single (e.g., auto-recurrence) and multivariate time series (e.g., multidimensional cross-recurrence quantification), examine coupling properties underlying leader-follower relationships (i.e., diagonal-profile methods), as well as track the evolution of recurrence rate over the time course (i.e., windowed methods).
 

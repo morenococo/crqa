@@ -37,12 +37,12 @@ and linguistic time series. It provides:
 
 Version 2.1.0 replaces the legacy `spdiags`-based pipeline with a
 **fused** Rcpp inner loop — meaning distance computation, threshold
-comparison, and line-statistic collection are merged into a single pass
-that never materialises the N×N distance matrix — and adds OpenMP
+comparison, and line-statistic collection are merged into a single
+pass that never materialises the N×N distance matrix — and adds OpenMP
 parallelism on top. Figure 1 plots wall time vs. N on the
-Rössler-system benchmark of Marwan & Kraemer (2023, *EPJST* 232:5–27)
-— the standard reference for RQA package comparisons (m = 3, τ = 6,
-Euclidean norm, dense ~2 % recurrence, 30 s cutoff per call).
+Rössler-system benchmark of Marwan & Kraemer (2023), the standard
+reference for RQA package comparisons (m = 3, τ = 6, Euclidean norm,
+dense ~2 % recurrence).
 
 ```{r benchmark-fig, echo = FALSE, out.width = "100%", fig.cap = "Figure 1. Wall time per call for crqa v2.1.0 vs. other RQA implementations on the Rössler-system benchmark (Marwan & Kraemer 2023). Filled markers: measured on this hardware (4-core Ryzen-class CPU). Open markers: reference levels from Marwan & Kraemer 2023 Fig 3A. crqa v2.1.0 uses the fused C++ kernel with OpenMP enabled (default); thread count = all available cores. AccRQA 1.0.1 (Adámek et al. 2026) measured single-threaded — their library also offers OpenMP and CUDA paths not benchmarked here. The aRQA path is a fundamentally different algorithm (phase-space histogram) with O(N) memory and scales to N = 200 000 in seconds."}
 knitr::include_graphics("figure3_speed_memory.png")
@@ -50,8 +50,8 @@ knitr::include_graphics("figure3_speed_memory.png")
 
 The figure summarises crqa's competitive position:
 
-- **`crqa v2.0.7 (legacy)`** hits the 30 s wall and runs out of memory
-  at N ≈ 12 k.
+- **`crqa v2.0.7 (legacy)`** scales as O(N²) in both time and memory
+  and runs out of memory at N ≈ 12 k on typical hardware.
 - **`crqa v2.1.0 (fused + OpenMP)`** — the current release — is 5–15×
   faster than v2.0.7 and comparable to pyunicorn (Cython, Python) on
   CPU. The fused C++ kernel parallelises the distance-and-threshold
@@ -70,7 +70,7 @@ The figure summarises crqa's competitive position:
   crqa v2.1.0's fused kernel substantially narrows that gap. AccRQA
   does not implement cross-recurrence (CRQA), multidimensional
   (mdcrqa), windowed analysis, categorical data, Theiler windows,
-  parameter optimisation, or visualisation — those remain exclusive
+  parameter optimisation, or visualisation, which remain exclusive
   to crqa.
 
 The two libraries are complementary: AccRQA is a GPU-aware kernel
@@ -78,13 +78,11 @@ library for vanilla auto-RQA on long single time series; crqa is the
 R-native analytical toolbox for the full range of recurrence analyses
 used in behavioural, cognitive and linguistic research.
 
-By default crqa uses **all available cores via OpenMP**. To force
-serial execution set `OMP_NUM_THREADS=1` in the shell *before*
-launching R (setting it via `Sys.setenv()` from inside R is too late —
-libgomp caches the thread count at first use). To cap parallelism,
-set `OMP_NUM_THREADS=N` similarly. When using a wrapper's `workers`
-argument, set `OMP_NUM_THREADS=1` in the parent session to avoid CPU
-over-subscription.
+By default, crqa uses **all available CPU cores** transparently — you
+do not need to configure anything. The only situation in which this
+matters is if you are running many `crqa()` calls in parallel yourself
+(for example via the `workers` argument of `wincrqa()`), in which case
+see the "Parallelism: advanced control" section below.
 
 ---
 
@@ -115,7 +113,7 @@ All analyses go through `crqa()` or one of its wrappers. The key arguments:
 | `side` | `"both"`, `"upper"`, or `"lower"` | `"both"` |
 | `method` | `"rqa"`, `"crqa"`, `"mdcrqa"`, `"aRQA"` | `"rqa"` |
 | `whiteline` | Compute white-line statistics? | `FALSE` |
-| `rr_denom` | RR denominator: `"valid"` or `"full"` (v2.0.7 compat.) | `"valid"` |
+| `rr_denom` | RR denominator: `"full"` (v2.0.7 compat.) or `"valid"` | `"full"` |
 | `workers` | Parallel workers (wrappers only) | 1 |
 
 ### Return value
@@ -173,8 +171,8 @@ during a joint description task. Cross-recurrence quantifies how temporally
 coupled their gaze patterns are.
 
 ```{r crqa-cat}
-listener <- eyemovement$listener[1:500]
-narrator <- eyemovement$narrator[1:500]
+listener <- eyemovement$listener
+narrator <- eyemovement$narrator
 
 ans_crqa <- crqa(narrator, listener,
                  delay = 1, embed = 1, rescale = 0, radius = 0.01,
@@ -215,10 +213,9 @@ Hand-movement data from a joint LEGO construction task: two participants'
 wrist positions in two spatial dimensions.
 
 ```{r mdcrqa}
-handset <- handmovement[1:300, ]
 
-P1 <- cbind(handset$P1_TT_d, handset$P1_TT_n)
-P2 <- cbind(handset$P2_TT_d, handset$P2_TT_n)
+P1 <- cbind(handmovement$P1_TT_d, handmovement$P1_TT_n)
+P2 <- cbind(handmovement$P2_TT_d, handmovement$P2_TT_n)
 
 ans_md <- crqa(P1, P2,
                delay = 5, embed = 2, rescale = 0, radius = 0.3,
@@ -282,24 +279,21 @@ plot(win_res$win, win_res$RR,
      main = "Windowed RR (narrator-listener gaze coupling)")
 ```
 
-Parallel execution is available via `workers > 1` using the `future`
-backend. Worker spawn overhead dominates for short jobs; use `workers > 1`
-when individual windows take > 0.5 s each.
+For very long series with many windows, parallel execution is
+available via `workers > 1`:
 
 ```{r wincrqa-parallel, eval = FALSE}
-# Cap each crqa() call to one OpenMP thread so the per-window cost
-# stays predictable; the parallelism comes from `workers`, not from
-# OpenMP. This avoids the M-workers x T-OpenMP-threads oversubscription.
-# IMPORTANT: set OMP_NUM_THREADS in the shell BEFORE launching R —
-# Sys.setenv() from inside R is too late because libgomp caches the
-# thread count at first parallel region.
-#
-#   $ OMP_NUM_THREADS=1 R   # then run this:
 win_par <- wincrqa(narrator, listener,
                    windowstep = 20, windowsize = 80,
                    delay = 1, embed = 1, radius = 0.001,
-                   workers = 4L)   # uses 4 CPU cores
+                   workers = 4L)   # spread windows across 4 CPU cores
 ```
+
+Worker spawn has a fixed overhead of a few seconds; use `workers > 1`
+only when individual windows are themselves expensive (long series or
+many windows). See the "Parallelism: advanced control" section below
+for the one configuration step needed when combining `workers > 1`
+with crqa's built-in OpenMP parallelism.
 
 ---
 
@@ -308,7 +302,12 @@ win_par <- wincrqa(narrator, listener,
 For N > ~10 000, the exact methods run out of memory (O(N²) peak RAM).
 `method = "aRQA"` implements the phase-space histogram approach of
 Schultz, Spiegel, Marwan & Albayrak (2015, *Phys. Lett. A* 379:997)
-and runs in O(N) memory. It is available directly via `crqa()`:
+and runs in O(N) memory. The method was developed and validated in the
+literature for **auto-recurrence** on a single series (see example
+below); the implementation also accepts two distinct series
+(cross-RQA) and matrix inputs (multidimensional), but the
+approximation has only been benchmarked for the auto-RQA case.
+It is available directly via `crqa()`:
 
 ```{r arqa}
 # Simulate 5000 points of AR(1) data as a stand-in for a long series
@@ -359,9 +358,8 @@ search for the radius that yields a target recurrence rate.
 ```{r optim, eval = FALSE}
 data(crqa)
 
-handset <- handmovement[1:300, ]
-P1 <- cbind(handset$P1_TT_d, handset$P1_TT_n)
-P2 <- cbind(handset$P2_TT_d, handset$P2_TT_n)
+P1 <- cbind(handmovement$P1_TT_d, handmovement$P1_TT_n)
+P2 <- cbind(handmovement$P2_TT_d, handmovement$P2_TT_n)
 
 par <- list(method = "mdcrqa", metric = "euclidean",
             maxlag = 20, radiusspan = 100, normalize = 0,
@@ -381,31 +379,31 @@ print(unlist(results))
 
 ## Note on the `rr_denom` argument (v2.1.0)
 
-Version 2.1.0 introduces `rr_denom = c("valid", "full")`:
+Version 2.1.0 introduces the `rr_denom` argument with two options:
 
-- `"valid"` (default): the denominator counts only cells that survived
-  the Theiler window and side mask — the fraction of *analysable* pairs
+- `"full"` (default): the denominator is N×M regardless of blanking.
+  Reproduces the historical convention (Marwan et al. 2007,
+  *Phys. Rep.* 438:237) and the behaviour of crqa ≤ 2.0.7. This is
+  the default so that upgrading from v2.0.7 does not silently change
+  any user's results.
+- `"valid"`: the denominator counts only cells that survived the
+  Theiler window and side mask — the fraction of *analysable* pairs
   that are recurrent. Internally consistent with how DET and ENTR are
-  computed.
-- `"full"`: reproduces the historical convention (Marwan et al. 2007,
-  *Phys. Rep.* 438:237) and the behaviour of crqa ≤ 2.0.7 — the
-  denominator is always N×M regardless of blanking.
+  computed. Recommended when reporting RR alongside DET/ENTR or when
+  comparing analyses that use different Theiler windows.
 
 When `tw == 0` and `side == "both"` (the most common case) both
 conventions give identical results.
 
 ```{r rr-denom}
-narrator_full <- eyemovement$narrator
-listener_full <- eyemovement$listener
-
-r_valid <- crqa(narrator_full, listener_full,
+r_valid <- crqa(narrator, listener,
                 delay = 1, embed = 1, rescale = 0, radius = 0.001,
                 normalize = 0, mindiagline = 2, minvertline = 2,
                 tw = 2, side = "both", method = "crqa",
                 metric = "euclidean", datatype = "categorical",
                 rr_denom = "valid")
 
-r_full <- crqa(narrator_full, listener_full,
+r_full <- crqa(narrator, listener,
                delay = 1, embed = 1, rescale = 0, radius = 0.001,
                normalize = 0, mindiagline = 2, minvertline = 2,
                tw = 2, side = "both", method = "crqa",
@@ -415,6 +413,32 @@ r_full <- crqa(narrator_full, listener_full,
 cat(sprintf("rr_denom='valid': RR = %.4f%%\n", r_valid$RR))
 cat(sprintf("rr_denom='full':  RR = %.4f%%  (v2.0.7 convention)\n", r_full$RR))
 ```
+
+---
+
+## Parallelism: advanced control
+
+Most users can ignore this section — by default, `crqa()` uses all
+available CPU cores and that is the right choice almost all the time.
+
+There is exactly **one** situation where you may need to take action:
+when you are spawning multiple R workers yourself (e.g. via
+`wincrqa(..., workers = 4)`) and each worker is also calling `crqa()`.
+In that case the inner OpenMP parallelism multiplies with the outer
+worker count and can overload the CPU. To avoid this, set
+`OMP_NUM_THREADS=1` in the shell *before* launching R, so each worker
+runs serially and the parallelism comes entirely from `workers`:
+
+```bash
+$ OMP_NUM_THREADS=1 R    # then run wincrqa(..., workers = 4) inside R
+```
+
+Setting it via `Sys.setenv()` from inside R is too late on most
+systems — the OpenMP thread count is cached the first time `crqa()`
+is called.
+
+To run crqa strictly single-threaded for reproducibility, use the same
+mechanism: launch R with `OMP_NUM_THREADS=1`.
 
 ---
 

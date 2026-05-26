@@ -39,8 +39,8 @@
 .packageName <- 'crqa'
 
 optimizeParam <- function(ts1, ts2, par, min.rec = 2, max.rec = 5,
-                          rr_denom = c("valid", "full")){
-  rr_denom <- match.arg(rr_denom)
+                          rr_denom = "full"){
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
   
   ## Initialize attached variables
   method = metric = maxlag = radiusspan = 

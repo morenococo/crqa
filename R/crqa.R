@@ -77,10 +77,10 @@ crqa <- function(ts1, ts2, delay = 1, embed = 1, rescale = 0,
                  radius = 0.001, normalize = 0, mindiagline = 2, minvertline = 2,
                  tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
                  method = "rqa", metric = "euclidean", datatype = "continuous",
-                 rr_denom = c("valid", "full")){
+                 rr_denom = "full"){
   
-  rr_denom <- match.arg(rr_denom)
-  
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
+
   # print(data.frame(delay, embed, radius, rescale, 
   #                 normalize, mindiagline, minvertline, tw, whiteline, 
   #                 recpt, side, method, metric, datatype))

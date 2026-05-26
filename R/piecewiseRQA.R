@@ -12,8 +12,8 @@ piecewiseRQA <- function(ts1, ts2, blockSize, delay = 1, embed = 1, rescale = 0,
                          datatype = "continuous", typeRQA = "full",
                          windowsize = NA,
                          workers = 1L,
-                         rr_denom = c("valid", "full")){
-  rr_denom <- match.arg(rr_denom)
+                         rr_denom = "full"){
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
 
   if (exists("ts1")) ts1 = ts1 else stop("No data has been specified for ts1")
   if (exists("ts2")) ts2 = ts2 else stop("No data has been specified for ts2")
