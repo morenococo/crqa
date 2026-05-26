@@ -2,14 +2,20 @@
 \alias{aRQA}
 \title{Approximative Recurrence Quantification Analysis}
 \description{
-Computes approximate recurrence rate (RR), determinism (DET) and mean
-diagonal-line length (L) for one or two (auto- or cross-) embedded
-time-series via phase-space histogram binning, without ever
+Computes approximate recurrence rate (RR), diagonal-line density (DET)
+and mean diagonal-line length (L) for one or two (auto- or cross-)
+embedded time-series via phase-space histogram binning, without ever
 materialising the recurrence matrix. Run-time is essentially linear in
 the number of embedded points; the algorithm is the one published in
 Schultz et al. (2015) and Spiegel et al. (2016) and is the practical
 route for \code{N >> 10^5}, where the exact \code{\link{crqa}} pipeline
 runs out of memory.
+
+\strong{Note:} The returned \code{DET} is an approximated measure of
+diagonal-line density derived from histogram statistics, not the exact
+determinism obtained by scanning the recurrence matrix. Treat it
+accordingly when interpreting results, especially for strongly
+deterministic dynamics (see Details).
 
 This function is also reachable as \code{crqa(..., method = "aRQA")}.
 }
@@ -54,6 +60,13 @@ become sparse — the "curse of dimensionality" hits the L-stacks). For
 publication-quality RQA on strongly deterministic systems, fall back to
 \code{method = "rqa"} or \code{"crqa"}.
 
+\strong{Short series.} aRQA's advantage is memory and speed at large N.
+For series shorter than roughly 1,000 embedded points the exact
+\code{\link{crqa}} pipeline (\code{method = "rqa"} or \code{"crqa"})
+finishes in milliseconds and returns precise values. Using
+\code{method = "aRQA"} on short data gains nothing and introduces
+unnecessary approximation error; a warning is issued in that case.
+
 \strong{Parameters silently ignored.} Because the algorithm never
 materialises the recurrence matrix, the following \code{\link{crqa}}
 parameters have no effect on the aRQA path: \code{tw}, \code{side},
@@ -64,7 +77,12 @@ parameters have no effect on the aRQA path: \code{tw}, \code{side},
 \value{
 A list matching the structure of \code{\link{crqa}}'s return value, with
 \code{NA} for measures that cannot be derived from the histogram alone:
-\item{RR, DET, L}{populated from the formulas above}
+\item{RR}{Approximate recurrence rate (percentage).}
+\item{DET}{Approximate diagonal-line density (percentage): the estimated
+  proportion of recurrent points that belong to diagonal structures of
+  length >= \code{mindiagline}. Derived from histogram statistics, not
+  from scanning the recurrence matrix.}
+\item{L}{Approximate mean diagonal-line length.}
 \item{NRLINE, maxL, ENTR, rENTR, LAM, TT, max_vertlength, catH}{\code{NA}}
 \item{RP}{\code{NA} — the recurrence matrix is never built}
 }

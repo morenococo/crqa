@@ -20,8 +20,8 @@ drpfromts <- function(ts1, ts2, windowsize,
                       tw = 0, whiteline = FALSE, recpt = FALSE, side = 'both',
                       method = 'crqa', metric = 'euclidean',
                       datatype = 'categorical',
-                      rr_denom = c("valid", "full")){
-  rr_denom <- match.arg(rr_denom)
+                      rr_denom = "full"){
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
   
   
   if(method != "mdcrqa"){ ## in case the method is multi-dimensional do not perform checks on vectors

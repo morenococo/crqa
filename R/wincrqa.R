@@ -82,8 +82,8 @@ wincrqa <- function(ts1,
                     datatype = 'continuous',
                     trend = FALSE,
                     workers = 1L,
-                    rr_denom = c("valid", "full")){
-  rr_denom <- match.arg(rr_denom)
+                    rr_denom = "full"){
+  rr_denom <- match.arg(rr_denom, c("full", "valid"))
 
   ## stop immediately if the windowsize is smaller than delay*phase AND we're not supplying an RP
   if ((windowsize < embed*delay) & recpt == FALSE){

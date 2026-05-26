@@ -17,7 +17,7 @@ normalize = 0, mindiagline = 2, minvertline = 2, tw = 0,
 whiteline = FALSE, recpt = FALSE, side = "both",
 method = "crqa", metric = "euclidean",
 datatype = "categorical",
-rr_denom = c("valid", "full"))
+rr_denom = "full")
 }
 
 \arguments{

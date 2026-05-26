@@ -19,6 +19,11 @@ aRQA <- function(ts1, ts2 = ts1,
   m1 <- to_mat(ts1); m2 <- to_mat(ts2)
   if (ncol(m1) != ncol(m2))
     stop("aRQA(): ts1 and ts2 must have the same number of columns")
+
+  if (nrow(m1) < 1000L)
+    warning("aRQA() called on a short series (N = ", nrow(m1), " < 1000). ",
+            "method = 'rqa' or 'crqa' will give exact results at comparable ",
+            "speed. aRQA is designed for N >> 10,000.", call. = FALSE)
   d <- ncol(m1)
 
   if (normalize == 1L) {

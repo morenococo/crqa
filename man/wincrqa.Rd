@@ -19,7 +19,7 @@ mindiagline = 2, minvertline = 2,
 tw = 0, whiteline = FALSE, recpt = FALSE, side = "both",
 method = "crqa", metric = "euclidean", datatype = "continuous",
 trend = FALSE, workers = 1L,
-rr_denom = c("valid", "full"))
+rr_denom = "full")
 
 }
 
@@ -96,10 +96,10 @@ rr_denom = c("valid", "full"))
   \code{Sys.setenv()} from inside R is too late: libgomp caches
   the thread count at first parallel region.}
 \item{rr_denom}{Forwarded to \code{\link{crqa}}; choice of
-  recurrence-rate denominator. \code{"valid"} (default) excludes
-  Theiler/side-blanked cells from the denominator; \code{"full"}
-  reproduces the historical convention. New in v2.1.0; see the
-  \code{\link{crqa}} documentation for details.}
+  recurrence-rate denominator. \code{"full"} (default) uses all
+  \code{N1 * N2} cells and reproduces the historical convention;
+  \code{"valid"} excludes Theiler/side-blanked cells from the
+  denominator. New in v2.1.0; see \code{\link{crqa}} for details.}
 
 }
 

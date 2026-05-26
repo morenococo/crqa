@@ -14,7 +14,7 @@ for continuous time-series data}
 }
 \usage{
 optimizeParam(ts1, ts2, par, min.rec = 2, max.rec = 5,
-              rr_denom = c("valid", "full"))
+              rr_denom = "full")
 }
 
 \arguments{
