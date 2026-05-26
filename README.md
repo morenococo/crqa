@@ -132,14 +132,15 @@ print(results)
 
 ## Authors
 
-* **Moreno I Coco** - *role = [cre, aut]* - (moreno.cocoi@gmail.com)
-* **Dan Mønster** - *role = [aut]* - (danm@econ.au.dk)
-* **Giuseppe Leonardi** - *role = [aut]* - (g.leonardi@vizja.pl)
-* **Rick Dale** - *role = [aut]* - (rdale@ucla.edu)
-* **Sebastian Wallot** - *role = [aut] - (sebastian.wallot@ae.mpg.de)
+* **Moreno I. Coco** - *creator, author* - (moreno.cocoi@gmail.com)
+* **Dan Mønster** - *author* - (danm@econ.au.dk)
+* **Giuseppe Leonardi** - *author* - (g.leonardi@vizja.pl)
+* **Rick Dale** - *author* - (rdale@ucla.edu)
+* **Sebastian Wallot** - *author* - (sebastian.wallot@ae.mpg.de)
 
-## Acknowledgments
+## Contributors
 
-* **James D. Dixon** - *role = [ctb]* - (james.dixon@uconn.edu)
-* **John  C. Nash** - *role = [ctb]* -  (nashjc@uottawa.ca)
-* **Alexandra Paxton** -*role = [ctb]* - (alexandra.paxton@uconn.edu)
+* **James D. Dixon** - (james.dixon@uconn.edu)
+* **John C. Nash** - (nashjc@uottawa.ca)
+* **Alexandra Paxton** - (alexandra.paxton@uconn.edu)
+* **Polyphony Bruna** - (pbruna@ucmerced.edu)
