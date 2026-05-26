@@ -15,6 +15,20 @@ install.packages("crqa")
 devtools::install_github("morenococo/crqa")
 ```
 
+## What's new in v2.1.0
+
+- **5–15× faster, lower memory.** A fused C++ (Rcpp) kernel replaces the old R pipeline for the three most common distance metrics (Euclidean, maximum, Manhattan). It runs a single pass over the phase-space matrix and never allocates the full N×N distance or recurrence matrix — memory scales as O(N + nnz) instead of O(N²). The practical limit grew from ~10 000 to ≥ 20 000 data points within a 30-second budget on a laptop.
+
+- **OpenMP parallelism.** The fused kernel runs in parallel across CPU cores out of the box. Sparse recurrence regimes (the typical CRQA case) scale near-linearly with the number of cores. Thread count is controlled via the standard `OMP_NUM_THREADS` environment variable.
+
+- **Approximative RQA for very long series.** `method = "aRQA"` in `crqa()` dispatches to a phase-space histogram algorithm (Schultz et al. 2015) that computes RR, DET and L in O(N) memory. Designed for N ≥ 10 000 where exact computation is expensive.
+
+- **Theiler-aware recurrence rate.** All functions now accept `rr_denom = "valid"` (default `"full"` for backward compatibility), which excludes Theiler-blanked and side-masked cells from the RR denominator — making RR internally consistent with DET and ENTR.
+
+- **Global normalisation fix.** `wincrqa()`, `windowdrp()` and `piecewiseRQA()` now apply `normalize` once to the full series before windowing, so all windows share the same scale reference. Previously normalisation was applied independently per window, shifting the effective threshold across windows.
+
+- **New functions.** `aRQA()`, `line_stats()`, `theiler_exclusion()`, `rosslerattractor()`.
+
 # Usage
 
 crqa comes with some data that can be used to test and study the different functions therein.
