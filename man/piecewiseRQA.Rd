@@ -113,6 +113,8 @@ on Matlab code by Sebastian Wallot}
 
 \examples{
 
+\donttest{
+
 data(crqa)
 
 listener = eyemovement$listener
@@ -132,6 +134,8 @@ pieceRP = piecewiseRQA(narrator, listener, blockSize, delay, embed, rescale,
 
 ## print recurrence measures across blocks (excluding the RP objects)
 print(pieceRP[!names(pieceRP) \%in\% "RP"])
+
+}
 
 }
 
